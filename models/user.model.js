@@ -15,7 +15,7 @@ const User = new mongoose.Schema(
     jiraLink: { type: String },
     githubLink: { type: String },
     userImage: { type: String },
-    comments: [{ type: Object }, { type: Object }],
+    comments: [{ type: Object }],
     workingOnProjects: [{ type: String }],
   },
   {
