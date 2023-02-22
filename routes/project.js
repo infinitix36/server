@@ -3,7 +3,13 @@ const projectRoute = express.Router();
 const Project = require("../models/project.model");
 
 projectRoute.route("/projects/getProjectDetails").get(function (req, res) {
-  res.json([{ url: "ljl", method: "j.", desc: "kb." }]);
+  Project.find({}, (err, projects) => {
+    if (err) {
+      res.send(err);
+    } else {
+      res.json(projects);
+    }
+  });
 });
 
 projectRoute.route("/projects/addBasicProjDetails").post(function (req, res) {
