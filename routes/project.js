@@ -12,6 +12,16 @@ projectRoute.route("/projects/getProjectDetails").get(function (req, res) {
   });
 });
 
+projectRoute.route("/projects/getIncompleteProjectDetails").get(function (req, res) {
+  Project.find({completeStatus:false}, (err, projects) => {
+    if (err) {
+      res.send(err);
+    } else {
+      res.json(projects);
+    }
+  });
+});
+
 projectRoute.route("/projects/addBasicProjDetails").post(function (req, res) {
   try {
     // variable should be in the name as in the model
@@ -54,12 +64,5 @@ projectRoute.route("/projects/addBasicProjDetails").post(function (req, res) {
   }
 });
 
-// projectRoute.route("/projects/addBasicProjDetails").post(function (req, res) {
-//     try {
-
-//     } catch {
-//       return res.json([{ message: "Data Not Found", status: "false" }]);
-//     }
-//   });
 
 module.exports = projectRoute;
