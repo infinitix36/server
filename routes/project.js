@@ -70,26 +70,29 @@ projectRoute.route("/projects/addBasicProjDetails").post(function (req, res) {
   }
 });
 
-projectRoute.route("/projects/addExtraProjDetails").post(function (req, res) {
+projectRoute.route("/projects/addExtraProjDetails").post(async (req, res) => {
   try {
     // variable should be in the name as in the model
     const gitHubLink = req.body.gitHubLink;
     const jiraLink = req.body.jiraLink;
+
     const clientDetails = {
       clientName:req.body.clientName,
       clientAddress:req.body.clientAddress,
       clientPhoneNumber:req.body.clientPhone
     }
+    const projectName = req.body.projectName;
     // we are creating a new object of the model
-    const project = new Project({
-      clientDetails,
-      gitHubLink,
-      jiraLink,
-    });
+    // const project = new Project({
+    //   clientDetails,
+    //   gitHubLink,
+    //   jiraLink,
+    // });
 
-    // we are saving the data to the database
-    project
-      .save()
+    Project.updateOne(
+      { projectName: projectName },
+      { $set: { gitHubLink: gitHubLink, jiraLink: jiraLink ,clientDetails:clientDetails,completeStatus:true} }
+    )
       .then((item) =>
         res.json({
           message: "Project Extra Details added successfully",
