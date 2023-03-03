@@ -82,6 +82,7 @@ projectRoute.route("/projects/addExtraProjDetails").post(async (req, res) => {
       clientPhoneNumber:req.body.clientPhone
     }
     const projectName = req.body.projectName;
+    const contributors= req.body.contributors;
     // we are creating a new object of the model
     // const project = new Project({
     //   clientDetails,
@@ -91,7 +92,7 @@ projectRoute.route("/projects/addExtraProjDetails").post(async (req, res) => {
 
     Project.updateOne(
       { projectName: projectName },
-      { $set: { gitHubLink: gitHubLink, jiraLink: jiraLink ,clientDetails:clientDetails,completeStatus:true} }
+      { $set: { gitHubLink: gitHubLink, jiraLink: jiraLink ,clientDetails:clientDetails,completeStatus:true,contributors:contributors} }
     )
       .then((item) =>
         res.json({
