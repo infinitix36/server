@@ -71,48 +71,35 @@ projectRoute.route("/projects/addBasicProjDetails").post(function (req, res) {
 });
 
 projectRoute.route("/projects/addExtraProjDetails").post(async (req, res) => {
-  try {
-    // variable should be in the name as in the model
-    const gitHubLink = req.body.gitHubLink;
-    const jiraLink = req.body.jiraLink;
-
-    const clientDetails = {
-      clientName:req.body.clientName,
-      clientAddress:req.body.clientAddress,
-      clientPhoneNumber:req.body.clientPhone
+  const gitHubLink = req.body.gitHubLink;
+  const jiraLink = req.body.jiraLink;
+  const clientDetails = {
+    clientName: req.body.clientName,
+    clientAddress: req.body.clientAddress,
+    clientPhoneNumber: req.body.clientPhone,
+  };
+  Project.updateOne(
+    { _id: req.body.projectId },
+    {
+      $set: {
+        gitHubLink: gitHubLink,
+        jiraLink: jiraLink,
+        clientDetails: clientDetails,
+        completeStatus: true,
+      },
     }
-    const projectName = req.body.projectName;
-    const contributors= req.body.contributors;
-    // we are creating a new object of the model
-    // const project = new Project({
-    //   clientDetails,
-    //   gitHubLink,
-    //   jiraLink,
-    // });
-
-    Project.updateOne(
-      { projectName: projectName },
-      { $set: { gitHubLink: gitHubLink, jiraLink: jiraLink ,clientDetails:clientDetails,completeStatus:true,contributors:contributors} }
-    )
-      .then((item) =>
-        res.json({
-          message: "Project Extra Details added successfully",
-          status: true,
-        })
-      )
-      .catch((err) => {
-        // error code 11000 is for duplicate data in mongo db
-        if (err.code === 11000) {
-          return res.json({
-            message: "Project already exists",
-            status: false,
-          });
-        }
-        res.status(500).send({ error: "Error saving data to the database" });
+  )
+    .then((result) => {
+      return res.json({
+        message: "Project updated successfully",
+        status: true,
       });
-  } catch {
-    return res.json([{ message: "Data Not Found", status: "false" }]);
-  }
+    })
+    .catch((err) => {
+      return res.json({
+        message: "Error in Updating Department Name",
+        status: false,
+      });
+    });
 });
-
 module.exports = projectRoute;
