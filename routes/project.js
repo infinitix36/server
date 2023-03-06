@@ -78,6 +78,8 @@ projectRoute.route("/projects/addExtraProjDetails").post(async (req, res) => {
     clientAddress: req.body.clientAddress,
     clientPhoneNumber: req.body.clientPhone,
   };
+  const contributors = req.body.contributors;
+  console.log(contributors);
   Project.updateOne(
     { _id: req.body.projectId },
     {
@@ -86,6 +88,7 @@ projectRoute.route("/projects/addExtraProjDetails").post(async (req, res) => {
         jiraLink: jiraLink,
         clientDetails: clientDetails,
         completeStatus: true,
+        contributors: contributors.map(contri=>contri.value)
       },
     }
   )
@@ -97,7 +100,7 @@ projectRoute.route("/projects/addExtraProjDetails").post(async (req, res) => {
     })
     .catch((err) => {
       return res.json({
-        message: "Error in Updating Department Name",
+        message: "Error in Updating Project Name",
         status: false,
       });
     });
