@@ -27,21 +27,20 @@ projectRoute
 projectRoute.route("/projects/addBasicProjDetails").post(function (req, res) {
   try {
     // variable should be in the name as in the model
-    const clientDetails = req.body.clientDetails;
-    const gitHubLink = req.body.gitHubLink;
-    const jiraLink = req.body.jiraLink;
+
+    const projectName = req.body.projectName;
+    const description = req.body.description;
+    const technology = req.body.technology;
     const projectDeadLine = req.body.deadline;
-    const contributors = req.body.contributors;
     const initiatedOn = Date.now();
     const projectManager = "4";
 
     // we are creating a new object of the model
     const project = new Project({
-      clientDetails,
-      gitHubLink,
-      jiraLink,
+      projectName,
+      description,
+      technology,
       projectDeadLine,
-      contributors,
       initiatedOn,
       projectManager,
     });
@@ -88,7 +87,7 @@ projectRoute.route("/projects/addExtraProjDetails").post(async (req, res) => {
         jiraLink: jiraLink,
         clientDetails: clientDetails,
         completeStatus: true,
-        contributors: contributors.map(contri=>contri.value)
+        contributors: contributors.map((contri) => contri.value),
       },
     }
   )
