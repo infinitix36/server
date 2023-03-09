@@ -35,4 +35,19 @@ userRoute.route("/users/getContributors").get(function (req, res) {
   );
 });
 
+userRoute.route("/users").get(function (req, res) {
+  userQuery = req.query.roleName ? {useRoleName: req.query.roleName} : {}
+  sortQuery = req.query.sortAsc == 1 ? {fname: 1} : {}
+  User.find(
+    userQuery,
+    (err, users) => {
+      if (err) {
+        res.send(err);
+      } else {
+        res.json(users);
+      }
+    }
+  ).sort(sortQuery);
+});
+
 module.exports = userRoute;
