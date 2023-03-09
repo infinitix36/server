@@ -20,7 +20,7 @@ userRoute.route("/users/getTechLead").get(function (req, res) {
 
 userRoute.route("/users/getContributors").get(function (req, res) {
   User.find(
-    { useRoleName: { $in: ["Developer", "TeahLead", "BA"] } },
+    { useRoleName: { $in: ["Developer", "QA", "BA"] } },
     { fname: 1, lname: 1 },
     (err, users) => {
       if (err) {
