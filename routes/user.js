@@ -2,6 +2,7 @@ const express = require("express");
 const userRoute = express.Router();
 const User = require("../models/user.model");
 
+
 userRoute.route("/users/getBA").get(function (req, res) {
   User.find(
     { useRoleName: { $in: [ "BA"] } },
