@@ -2,6 +2,8 @@ const express = require("express");
 const userRoute = express.Router();
 const User = require("../models/user.model");
 
+
+
 userRoute.route("/users/getFind").get(function (req, res) {
   User.find({ fname: { $in: ["kama"] } }, (err, users) => {
     if (err) {
