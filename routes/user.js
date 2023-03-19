@@ -2,7 +2,31 @@ const express = require("express");
 const userRoute = express.Router();
 const User = require("../models/user.model");
 
-
+userRoute.route("/users/addRate").post(async (req, res) => {
+  const rating = {
+    rating: req.body.rating,
+  };
+  Project.updateOne(
+    { lname: req.body.lname },
+    {
+      $set: {
+        rating: rating,
+      },
+    }
+  )
+    .then((result) => {
+      return res.json({
+        message: "rated successfully",
+        status: true,
+      });
+    })
+    .catch((err) => {
+      return res.json({
+        message: "Error in rating",
+        status: false,
+      });
+    });
+});
 
 userRoute.route("/users/getFind").get(function (req, res) {
   User.find({ fname: { $in: ["kama"] } }, (err, users) => {

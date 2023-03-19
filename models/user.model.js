@@ -12,7 +12,8 @@ const User = new mongoose.Schema(
     userGitHubLink: { type: String },
     userJiraLink: { type: String },
     userImage: [{ type: Object}],
-    feedback: { type: String}
+    feedback: { type: String},
+    rating: { type: String},
   },
   {
     collection: "userRoles",
