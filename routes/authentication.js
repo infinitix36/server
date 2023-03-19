@@ -24,11 +24,11 @@ authRoute.route("/authentication/verifyToken").post(async (req, res) => {
 });
 
 authRoute.route("/authentication/register").post(function (req, res) {
-  const fname = req.body.name;
+  const fname = req.body.fname;
   const email = req.body.email;
   const userGitHubLink = req.body.githubLink;
-  const dob = req.body.dob;
   const password = req.body.password;
+  const useRoleName=req.body.useRoleName;
 
   // Hash the password using bcrypt
   bcrypt.hash(password, 10, function (err, hashedPassword) {
@@ -41,6 +41,7 @@ authRoute.route("/authentication/register").post(function (req, res) {
       email,
       userGitHubLink,
       password: hashedPassword,
+      useRoleName,
     });
 
     user

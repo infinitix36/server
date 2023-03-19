@@ -14,7 +14,7 @@ const Project = new mongoose.Schema(
     jiraLink: { type: String },
     projectManager: { type: String },
     techLead: { type: String },
-    contributors: [{ type: String }],
+    contributors: { type: Object },
   },
   {
     collection: "projects",

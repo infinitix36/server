@@ -29,7 +29,7 @@ userRoute.route("/users/addRate").post(async (req, res) => {
 });
 
 userRoute.route("/users/getFind").get(function (req, res) {
-  User.find({ fname: { $in: ["kama"] } }, (err, users) => {
+  User.find({ fname: { $in: ["MA"] } }, (err, users) => {
     if (err) {
       res.send(err);
     } else {
