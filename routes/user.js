@@ -84,7 +84,7 @@ userRoute.route("/users/getTechLead").get(function (req, res) {
 
 userRoute.route("/users/getContributors").get(function (req, res) {
   User.find(
-    { useRoleName: { $in: ["Developer", "TeahLead", "BA"] } },
+    { useRoleName: { $in: ["Developer", "QA", "BA"] } },
     { fname: 1, lname: 1 },
     (err, users) => {
       if (err) {
@@ -97,6 +97,184 @@ userRoute.route("/users/getContributors").get(function (req, res) {
       }
     }
   );
+});
+
+userRoute.route("/users/getBA").get(function (req, res) {
+  User.find({ useRoleName: { $in: ["BA"] } }, (err, users) => {
+    if (err) {
+      res.send(err);
+    } else {
+      res.json(users);
+    }
+  });
+});
+
+userRoute.route("/users/getTechlead/alphabet").get(function (req, res) {
+  userQuery = { useRoleName: "TeahLead" };
+  sortQuery = { fname: 1 };
+  User.find(
+    userQuery,{fname:1},
+    (err, users) => {
+      if (err) {
+        res.send(err);
+      } else {
+        res.json(users);
+      }
+    }
+  ).sort(sortQuery);
+});
+
+userRoute.route("/users/getQA/alphabet").get(function (req, res) {
+  userQuery = { useRoleName: "QA" };
+  sortQuery = { fname: 1 };
+  User.find(
+    userQuery, {fname:1},
+    (err, users) => {
+      if (err) {
+        res.send(err);
+      } else {
+        res.json(users);
+      }
+    }
+  ).sort(sortQuery);
+});
+
+
+
+userRoute.route("/users/getBA/alphabet").get(function (req, res) {
+  userQuery = { useRoleName: "BA" };
+  sortQuery = { fname: 1 };
+  User.find(
+    userQuery, {fname:1},
+    (err, users) => {
+      if (err) {
+        res.send(err);
+      } else {
+        res.json(users);
+      }
+    }
+  ).sort(sortQuery);
+});
+
+
+
+userRoute.route("/users/getDeveloper/alphabet").get(function (req, res) {
+  userQuery = { useRoleName: "Developer" };
+  sortQuery = { fname: 1 };
+  User.find(
+    userQuery, {fname:1},
+    (err, users) => {
+      if (err) {
+        res.send(err);
+      } else {
+        res.json(users);
+      }
+    }
+  ).sort(sortQuery);
+});
+
+
+
+
+// userRoute.route("/users/getBA/alphabet").get(function (req, res) {
+//   sortQuery1 = req.query.sortAsc == 1 ? {fname: 1} : {}
+//   User.find({ useRoleName: { $in: ["BA"] } }, (err, users) => {
+//       if (err) {
+//         res.send(err);
+//       } else {
+//         res.json(users);
+//       }
+//     }
+//   ).sort(sortQuery);
+// });
+
+// userRoute.route("/users/getQA/alphabet").get(function (req, res) {
+//   sortQuery = req.query.sortAsc == 1 ? {fname: 1} : {}
+//   User.find({ useRoleName: { $in: ["QA"] } }, (err, users) => {
+//       if (err) {
+//         res.send(err);
+//       } else {
+//         res.json(users);
+//       }
+//     }
+//   ).sort(sortQuery);
+// });
+
+// userRoute.route("/users/getTechlead/alphabet").get(function (req, res) {
+//   sortQuery = req.query.sortAsc == 1 ? {fname: 1} : {}
+//   User.find({ useRoleName: { $in: ["Teahlead"] } }, (err, users) => {
+//       if (err) {
+//         res.send(err);
+//       } else {
+//         res.json(users);
+//       }
+//     }
+//   ).sort(sortQuery);
+// });
+
+
+// userRoute.route("/users").get(function (req, res) {
+//   userQuery = req.query.roleName ? {useRoleName: req.query.roleName} : {}
+//   sortQuery = req.query.sortAsc == 1 ? {fname: 1} : {}
+//   User.find(
+//     userQuery,
+//     (err, users) => {
+//       if (err) {
+//         res.send(err);
+//       } else {
+//         res.json(users);
+//       }
+//     }
+//   ).sort(sortQuery);
+// });
+
+
+
+// userRoute.route("/user/alphabet").get(function (req, res) {
+//   userQuery = req.query.roleName ? {useRoleName: req.query.roleName} : {}
+//   sortQuery = req.query.sortAsc == 1 ? {fname: 1} : {}
+//   User.find(
+//     userQuery,
+//     (err, users) => {
+//       if (err) {
+//         res.send(err);
+//       } else {
+//         res.json(users);
+//       }
+//     }
+//   ).sort(sortQuery);
+// });
+
+// userRoute.route("/user/commits").get(async function (req, res) {
+//   userQuery = req.query.roleName ? {useRoleName: req.query.roleName} : {}
+
+//   const owner = req.query.owner;
+//   const repo = req.query.repo;
+
+//   try {
+//     const response = await axios.get(`https://api.github.com/repos/${owner}/${repo}/commits`);
+//     const commitCount = response.data.length;
+//     res.json({ commitCount });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ error: "Failed to fetch commit count." });
+//   }
+
+//   sortQuery = req.query.sortAsc == 1 ? {commitCount: 1} : {}
+//   User.find(
+//     userQuery,
+//     (err, users) => {
+//       if (err) {
+//         res.send(err);
+//       } else {
+//         res.json(users);
+//       }
+//     }
+//   ).sort(sortQuery);
+// });
+
+userRoute.route("/user/rating").get(function (req, res) {
+  
 });
 
 module.exports = userRoute;
