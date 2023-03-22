@@ -19,6 +19,7 @@ app.use(express.json());
 app.use(require("./routes/sample"));
 app.use(require("./routes/project"));
 app.use(require("./routes/user"));
+app.use(require("./routes/todo"));
 app.use(require("./routes/authentication"));
 
 app.get("/", (req, res) => {
