@@ -2,8 +2,8 @@ const mongoose = require("mongoose");
 const ToDo = new mongoose.Schema(
   {
     userID: { type: String, required: true },
-    tasks:[{type:Object}]
-  },
+    tasks: [{ type: Object }],
+  }
   // {
   //   collection: "ToDo",
   // }

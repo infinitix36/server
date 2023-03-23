@@ -5,12 +5,14 @@ const User = require("../models/user.model");
 userRoute.route("/users/addRate").post(async (req, res) => {
   const rating = {
     rating: req.body.rating,
+
   };
-  Project.updateOne(
-    { lname: req.body.lname },
+  const ratingString = JSON.stringify(rating);
+  User.updateOne(
+    { fname: req.body.fname },
     {
       $set: {
-        rating: rating,
+        rating: ratingString,
       },
     }
   )
@@ -21,9 +23,11 @@ userRoute.route("/users/addRate").post(async (req, res) => {
       });
     })
     .catch((err) => {
+      console.log(err);
       return res.json({
         message: "Error in rating",
         status: false,
+        
       });
     });
 });
@@ -112,69 +116,50 @@ userRoute.route("/users/getBA").get(function (req, res) {
 userRoute.route("/users/getTechlead/alphabet").get(function (req, res) {
   userQuery = { useRoleName: "TeahLead" };
   sortQuery = { fname: 1 };
-  User.find(
-    userQuery,{fname:1},
-    (err, users) => {
-      if (err) {
-        res.send(err);
-      } else {
-        res.json(users);
-      }
+  User.find(userQuery, { fname: 1 }, (err, users) => {
+    if (err) {
+      res.send(err);
+    } else {
+      res.json(users);
     }
-  ).sort(sortQuery);
+  }).sort(sortQuery);
 });
 
 userRoute.route("/users/getQA/alphabet").get(function (req, res) {
   userQuery = { useRoleName: "QA" };
   sortQuery = { fname: 1 };
-  User.find(
-    userQuery, {fname:1},
-    (err, users) => {
-      if (err) {
-        res.send(err);
-      } else {
-        res.json(users);
-      }
+  User.find(userQuery, { fname: 1 }, (err, users) => {
+    if (err) {
+      res.send(err);
+    } else {
+      res.json(users);
     }
-  ).sort(sortQuery);
+  }).sort(sortQuery);
 });
-
-
 
 userRoute.route("/users/getBA/alphabet").get(function (req, res) {
   userQuery = { useRoleName: "BA" };
   sortQuery = { fname: 1 };
-  User.find(
-    userQuery, {fname:1},
-    (err, users) => {
-      if (err) {
-        res.send(err);
-      } else {
-        res.json(users);
-      }
+  User.find(userQuery, { fname: 1 }, (err, users) => {
+    if (err) {
+      res.send(err);
+    } else {
+      res.json(users);
     }
-  ).sort(sortQuery);
+  }).sort(sortQuery);
 });
-
-
 
 userRoute.route("/users/getDeveloper/alphabet").get(function (req, res) {
   userQuery = { useRoleName: "Developer" };
   sortQuery = { fname: 1 };
-  User.find(
-    userQuery, {fname:1},
-    (err, users) => {
-      if (err) {
-        res.send(err);
-      } else {
-        res.json(users);
-      }
+  User.find(userQuery, { fname: 1 }, (err, users) => {
+    if (err) {
+      res.send(err);
+    } else {
+      res.json(users);
     }
-  ).sort(sortQuery);
+  }).sort(sortQuery);
 });
-
-
-
 
 // userRoute.route("/users/getBA/alphabet").get(function (req, res) {
 //   sortQuery1 = req.query.sortAsc == 1 ? {fname: 1} : {}
@@ -212,7 +197,6 @@ userRoute.route("/users/getDeveloper/alphabet").get(function (req, res) {
 //   ).sort(sortQuery);
 // });
 
-
 // userRoute.route("/users").get(function (req, res) {
 //   userQuery = req.query.roleName ? {useRoleName: req.query.roleName} : {}
 //   sortQuery = req.query.sortAsc == 1 ? {fname: 1} : {}
@@ -227,8 +211,6 @@ userRoute.route("/users/getDeveloper/alphabet").get(function (req, res) {
 //     }
 //   ).sort(sortQuery);
 // });
-
-
 
 // userRoute.route("/user/alphabet").get(function (req, res) {
 //   userQuery = req.query.roleName ? {useRoleName: req.query.roleName} : {}
@@ -273,8 +255,6 @@ userRoute.route("/users/getDeveloper/alphabet").get(function (req, res) {
 //   ).sort(sortQuery);
 // });
 
-userRoute.route("/user/rating").get(function (req, res) {
-  
-});
+userRoute.route("/user/rating").get(function (req, res) {});
 
 module.exports = userRoute;

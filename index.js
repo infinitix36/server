@@ -21,6 +21,7 @@ app.use(require("./routes/project"));
 app.use(require("./routes/user"));
 app.use(require("./routes/todo"));
 app.use(require("./routes/authentication"));
+app.use(require("./routes/git"));
 
 app.get("/", (req, res) => {
   res.send("Server is running on Port " + PORT);
@@ -35,7 +36,7 @@ mongoose
   })
   .then(() => {
     app.listen(PORT, () => {
-      console.log("Node Server running on port "+PORT);
+      console.log("Node Server running on port " + PORT);
     });
     console.log("Database connected!");
   })
