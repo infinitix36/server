@@ -1,6 +1,7 @@
 const express = require("express");
 const userRoute = express.Router();
 const User = require("../models/user.model");
+const fetch = require('node-fetch');
 
 userRoute.route("/users/getTechLead").get(function (req, res) {
   User.find(
@@ -108,6 +109,53 @@ userRoute.route("/users/getDeveloper/alphabet").get(function (req, res) {
     }
   ).sort(sortQuery);
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// userRoute.route("/users/getTechlead/avatar").get(function (req, res) {
+//   userQuery = { useRoleName: "TeahLead" };
+//   User.find(
+//     userQuery,{github: 1},
+//     async (err, users) => {
+//       if (err) {
+//         res.send(err);
+//       } else {
+//         // Fetch the avatar URLs for each user's GitHub profile
+//         const usersWithAvatars = await Promise.all(
+//           users.map(async (user) => {
+//             if (users.
+//               userGitHubLink) {
+//               const githubUsername = users.userGitHubLink.split("/").pop();
+//               const githubApiUrl = `https://api.github.com/users/${userGitHubLink}`;
+//               const response = await axios.get(githubApiUrl);
+//               const avatarUrl = response.data.avatar_url;
+//               return { ...user._doc, avatarUrl };
+//             } else {
+//               return user._doc;
+//             }
+//           })
+//         );
+//         res.json(usersWithAvatars);
+//       }
+//     }
+//   ).sort(sortQuery);
+// });
+
+
+
+
+
 
 
 

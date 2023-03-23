@@ -10,6 +10,7 @@ const User = new mongoose.Schema(
     userStatus: { type: Boolean},
     orangechangeHrLink: { type: String },
     userGitHubLink: { type: String },
+    username: { type: String },
     userJiraLink: { type: String },
     userImage: [{ type: Object}],
     feedback: { type: String}
