@@ -24,16 +24,20 @@ authRoute.route("/authentication/verifyToken").post(async (req, res) => {
 });
 
 authRoute.route("/authentication/register").post(function (req, res) {
+
   const userRoleName = req.body.userRoleName;
   const fname = req.body.fname;
   const lname = req.body.lname;
+
   const email = req.body.email;
   const phone = req.body.phone;
   const orangechangeHrLink = req.body.orangechangeHrLink;
   const userGitHubLink = req.body.githubLink;
+
   const userJiraLink = req.body.userJiraLink;
   const password = req.body.password;
   const confirmPassword = req.body.confirmPassword;
+
 
   // Hash the password using bcrypt
   bcrypt.hash(password, 10, function (err, hashedPassword) {
@@ -51,7 +55,9 @@ authRoute.route("/authentication/register").post(function (req, res) {
       userGitHubLink: userGitHubLink,
       userJiraLink: userJiraLink,
       password: hashedPassword,
+
       confirmPassword: confirmPassword,
+
     });
 
     // Attempt to save the user's data to the database

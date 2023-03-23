@@ -2,6 +2,7 @@ const express = require("express");
 const projectRoute = express.Router();
 const Project = require("../models/project.model");
 
+
 projectRoute.route("/projects/getProjectDetails").get(function (req, res) {
   Project.find({}, (err, projects) => {
     if (err) {
@@ -79,6 +80,11 @@ projectRoute.route("/projects/addExtraProjDetails").post(async (req, res) => {
   };
   const contributors = req.body.contributors;
   console.log(contributors);
+
+  const contributorsArray = contributors.map((contri) => ({
+    label: contri.label,
+    value: contri.value,
+  }));
   Project.updateOne(
     { _id: req.body.projectId },
     {
@@ -87,7 +93,7 @@ projectRoute.route("/projects/addExtraProjDetails").post(async (req, res) => {
         jiraLink: jiraLink,
         clientDetails: clientDetails,
         completeStatus: true,
-        contributors: contributors.map((contri) => contri.value),
+        contributors: contributorsArray,
       },
     }
   )
