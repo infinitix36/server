@@ -5,11 +5,10 @@ const User = require("../models/user.model");
 userRoute.route("/users/addRate").post(async (req, res) => {
   const rating = {
     rating: req.body.rating,
-
   };
   const ratingString = JSON.stringify(rating);
   User.updateOne(
-    { fname: req.body.fname },
+    { _id: req.body.id },
     {
       $set: {
         rating: ratingString,
@@ -27,7 +26,6 @@ userRoute.route("/users/addRate").post(async (req, res) => {
       return res.json({
         message: "Error in rating",
         status: false,
-        
       });
     });
 });
@@ -80,6 +78,20 @@ userRoute.route("/users/getTechLead").get(function (req, res) {
       } else {
         // const usersArray = projects.map((item) => item.users);
         // res.json(usersArray);
+        res.json(users);
+      }
+    }
+  );
+});
+
+userRoute.route("/users/getMembers").get(function (req, res) {
+  User.find(
+    { useRoleName: { $in: ["developer", "QA", "BA"] } },
+    { fname: 1, lname: 1 },
+    (err, users) => {
+      if (err) {
+        res.send(err);
+      } else {
         res.json(users);
       }
     }
