@@ -4,14 +4,16 @@ const User = require("../models/user.model");
 
 userRoute.route("/users/addRate").post(async (req, res) => {
   const rating = {
-    rating: req.body.rating,
+    rating1: req.body.rating1,
+    rating2: req.body.rating2,
   };
-  const ratingString = JSON.stringify(rating);
+  const rate = rating.rating1 + rating.rating2;
+
   User.updateOne(
     { _id: req.body.id },
     {
       $set: {
-        rating: rating,
+        rating: rate,
       },
     }
   )
