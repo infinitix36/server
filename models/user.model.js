@@ -14,6 +14,7 @@ const User = new mongoose.Schema(
     userImage: [{ type: Object}],
     feedback: { type: String},
     rating: { type: String},
+    approveStatus:{type: Boolean, default: false},
   },
   {
     collection: "userRoles",

@@ -2,6 +2,20 @@ const express = require("express");
 const userRoute = express.Router();
 const User = require("../models/user.model");
 
+
+
+userRoute
+  .route("/users/usersToApproved")
+  .get(function (req, res) {
+    User.find({ approveStatus: false }, (err, users) => {
+      if (err) {
+        res.send(err);
+      } else {
+        res.json(users);
+      }
+    });
+  });
+
 userRoute.route("/users/getRate").get(function (req, res) {
   User.find({}, { fname: 1, rating: 1 }, (err, users) => {
     if (err) {
@@ -11,6 +25,7 @@ userRoute.route("/users/getRate").get(function (req, res) {
     }
   });
 });
+
 
 userRoute.route("/users/addRate").post(async (req, res) => {
   const rating = {
