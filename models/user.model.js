@@ -15,6 +15,7 @@ const User = new mongoose.Schema(
     feedback: { type: String},
     rating: { type: String},
     approveStatus:{type: Boolean, default: false},
+    submittedOn: {type: Date, default: new Date()}
   },
   {
     collection: "userRoles",
