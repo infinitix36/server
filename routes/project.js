@@ -2,16 +2,30 @@ const express = require("express");
 const projectRoute = express.Router();
 const Project = require("../models/project.model");
 
+
+projectRoute.route("/projects/getFeedback/:projectId").get(function (req, res) {
+  const projectId = req.params.projectId;
+  Project.find({ _id: projectId }, {feedBacks:1},(err, projects) => {
+    if (err) {
+      res.send(err);
+    } else {
+      res.json(projects);
+    }
+  });
+});
+
 projectRoute.route("/project/addFeed").post(function (req, res) {
   const projectId = req.body.projectId;
   const feedBacks = req.body.feedback;
   const feedBy = req.body.feedBy;
+  const feedbyName= req.body.feedbyName;
   
   const newFeedBack = {
     feedId: Date.now(),
     feedback: feedBacks,
     createdDate: Date.now(),
     feedBy:feedBy,
+    feedbyName:feedbyName,
   };
 
 
