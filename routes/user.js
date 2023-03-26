@@ -3,17 +3,65 @@ const userRoute = express.Router();
 const User = require("../models/user.model");
 const fetch = require('node-fetch');
 
+userRoute.route("/users/getRate").get(function (req, res) {
+  User.find({}, { fname: 1, rating: 1 }, (err, users) => {
+    if (err) {
+      res.send(err);
+    } else {
+      res.json(users);
+    }
+  });
+});
+
+userRoute.route("/users/addRate").post(async (req, res) => {
+  const rating = {
+    rating1: req.body.rating1,
+    rating2: req.body.rating2,
+  };
+  const rate = rating.rating1 + rating.rating2;
+
+  User.updateOne(
+    { _id: req.body.id },
+    {
+      $set: {
+        rating: rate,
+      },
+    }
+  )
+    .then((result) => {
+      return res.json({
+        message: "rated successfully",
+        status: true,
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+      return res.json({
+        message: "Error in rating",
+        status: false,
+      });
+    });
+});
+
+
 userRoute.route("/users/getTechLead").get(function (req, res) {
   User.find(
     { useRoleName: "TeahLead" },
-    { fname: 1, lname: 1 },
+    { fname: 1, lname: 1, username: 1 },
     (err, users) => {
       if (err) {
         res.send(err);
       } else {
         // const usersArray = projects.map((item) => item.users);
         // res.json(usersArray);
-        res.json(users);
+        let newUsers = []
+        for(const user of users) {
+          fetch(`https://api.github.com/users/${user.username}`)
+          .then(response=>response.json().then(data=>{
+              newUsers.push({...user._doc, avatar: data.avatar_url})
+          }))
+         }
+        res.json(newUsers)
       }
     }
   );
@@ -37,78 +85,143 @@ userRoute.route("/users/getContributors").get(function (req, res) {
 });
 
 userRoute.route("/users/getBA").get(function (req, res) {
-  User.find({ useRoleName: { $in: ["BA"] } }, (err, users) => {
-    if (err) {
-      res.send(err);
-    } else {
-      res.json(users);
+  User.find(
+    { useRoleName: "TeahLead" },
+    { fname: 1, lname: 1, username: 1 },
+    (err, users) => {
+      if (err) {
+        res.send(err);
+      } else {
+        // const usersArray = projects.map((item) => item.users);
+        // res.json(usersArray);
+        let newUsers = []
+        for(const user of users) {
+          fetch(`https://api.github.com/users/${user.username}`)
+          .then(response=>response.json().then(data=>{
+              newUsers.push({...user._doc, avatar: data.avatar_url})
+          }))
+         }
+        res.json(newUsers)
+      }
+    }
+  );
+});
+
+
+
+
+
+// API => /users/filters?job=QA&name=Nirush
+// Query Method API Call
+//userRoute.route("/users/filters").get(function (req, res) {
+  // User.find({ userRoleName: { $in: ["QA"] } }, (err, users) => {
+  //   if (err) {
+  //     res.send(err);
+  //   } else {
+  //     res.json(users);
+  //   }
+  // });
+
+  userRoute.route("/users/filters").get(function (req, res) {
+    const job = req.query.userRoleName;
+    const name = req.query.fname;
+    
+    // If job and name are not provided, return all users
+    if (!job && !name) {
+      User.find({}, (err, users) => {
+        if (err) {
+          res.send(err);
+        } else {
+          res.json(users);
+        }
+      });
+    } 
+    // If job is provided, filter by job
+    else if (job) {
+      User.find({ userRoleName: job }, (err, users) => {
+        if (err) {
+          res.send(err);
+        } else {
+          res.json(users);
+        }
+      });
+    }
+    // If name is provided, filter by name
+    else if (name) {
+      User.find({ fname: name }, (err, users) => {
+        if (err) {
+          res.send(err);
+        } else {
+          res.json(users);
+        }
+      });
     }
   });
-});
-
-userRoute.route("/users/getTechlead/alphabet").get(function (req, res) {
-  userQuery = { useRoleName: "TeahLead" };
-  sortQuery = { fname: 1 };
-  User.find(
-    userQuery,{fname:1},
-    (err, users) => {
-      if (err) {
-        res.send(err);
-      } else {
-        res.json(users);
-      }
-    }
-  ).sort(sortQuery);
-});
-
-userRoute.route("/users/getQA/alphabet").get(function (req, res) {
-  userQuery = { useRoleName: "QA" };
-  sortQuery = { fname: 1 };
-  User.find(
-    userQuery, {fname:1},
-    (err, users) => {
-      if (err) {
-        res.send(err);
-      } else {
-        res.json(users);
-      }
-    }
-  ).sort(sortQuery);
-});
 
 
+// userRoute.route("/users/getTechlead/alphabet").get(function (req, res) {
+//   userQuery = { useRoleName: "TeahLead" };
+//   sortQuery = { fname: 1 };
+//   User.find(
+//     userQuery,{fname:1},
+//     (err, users) => {
+//       if (err) {
+//         res.send(err);
+//       } else {
+//         res.json(users);
+//       }
+//     }
+//   ).sort(sortQuery);
+// });
 
-userRoute.route("/users/getBA/alphabet").get(function (req, res) {
-  userQuery = { useRoleName: "BA" };
-  sortQuery = { fname: 1 };
-  User.find(
-    userQuery, {fname:1},
-    (err, users) => {
-      if (err) {
-        res.send(err);
-      } else {
-        res.json(users);
-      }
-    }
-  ).sort(sortQuery);
-});
+// userRoute.route("/users/getQA/alphabet").get(function (req, res) {
+//   userQuery = { useRoleName: "QA" };
+//   sortQuery = { fname: 1 };
+//   User.find(
+//     userQuery, {fname:1, username:1},
+//     (err, users) => {
+//       if (err) {
+//         res.send(err);
+//       } else {
+//         res.json(users);
+//       }
+//     }
+//   ).sort(sortQuery);
+// });
 
 
 
-userRoute.route("/users/getDeveloper/alphabet").get(function (req, res) {
-  userQuery = { useRoleName: "Developer" };
-  sortQuery = { fname: 1 };
-  User.find(
-    userQuery, {fname:1},
-    (err, users) => {
-      if (err) {
-        res.send(err);
-      } else {
-        res.json(users);
-      }
-    }
-  ).sort(sortQuery);
-});
+// userRoute.route("/users/getBA/alphabet").get(function (req, res) {
+//   userQuery = { useRoleName: "BA" };
+//   sortQuery = { fname: 1 };
+//   User.find(
+//     userQuery, {fname:1},
+//     (err, users) => {
+//       if (err) {
+//         res.send(err);
+//       } else {
+//         res.json(users);
+//       }
+//     }
+//   ).sort(sortQuery);
+// });
+
+
+
+// userRoute.route("/users/getDeveloper/alphabet").get(function (req, res) {
+//   userQuery = { useRoleName: "Developer" };
+//   sortQuery = { fname: 1 };
+//   User.find(
+//     userQuery, {fname:1},
+//     (err, users) => {
+//       if (err) {
+//         res.send(err);
+//       } else {
+//         res.json(users);
+//       }
+//     }
+//   ).sort(sortQuery);
+// });
 
 
 

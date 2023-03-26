@@ -111,4 +111,30 @@ projectRoute.route("/projects/addExtraProjDetails").post(function (req, res) {
   }
 });
 
+
+
+
+// Calculate project completion percentage
+const getProjectCompletionPercentage = (project) => {
+  const initiatedOn = moment(project.initiatedOn);
+  const deadline = moment(project.deadline);
+  const completedOn = moment(project.completedOn);
+  const totalDays = deadline.diff(initiatedOn, 'days');
+  const completedDays = completedOn.diff(initiatedOn, 'days');
+  const percentage = Math.floor((completedDays / totalDays) * 100);
+  return percentage;
+};  
+
+// Get project by ID and calculate its completion percentage
+projectRoute.route("/projects/getprogress").get(async (req, res) => {
+  try {
+    const project = await Project.findById(req.params.id);
+    const percentage = getProjectCompletionPercentage(project);
+    res.json({ project, percentage });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
 module.exports = projectRoute;
