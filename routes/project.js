@@ -2,6 +2,40 @@ const express = require("express");
 const projectRoute = express.Router();
 const Project = require("../models/project.model");
 
+projectRoute.route("/project/addFeed").post(function (req, res) {
+  const projectId = req.body.projectId;
+  const feedBacks = req.body.feedback;
+  const feedBy = req.body.feedBy;
+  
+  const newFeedBack = {
+    feedId: Date.now(),
+    feedback: feedBacks,
+    createdDate: Date.now(),
+    feedBy:feedBy,
+  };
+
+
+  Project.findOneAndUpdate(
+    { _id: projectId },
+    { $push: { feedBacks: newFeedBack } },
+   
+    (err, projects) => {
+      if (err) {
+        return res.json({
+          message: "Error try again !",
+          status: false,
+        });
+      } else {
+        return res.json({
+          message: "feedback Added Successfully",
+          status: true,
+        });
+      }
+    }
+  );
+});
+
+
 projectRoute.route("/projects/getProjectDetails").get(function (req, res) {
   Project.find({}, (err, projects) => {
     if (err) {
