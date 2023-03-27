@@ -82,7 +82,7 @@ projectRoute.route("/projects/addBasicProjDetails").post(function (req, res) {
     const projectDeadLine = req.body.deadline;
     const techLead = req.body.techlead;
     const initiatedOn = Date.now();
-    const projectManager = "4";
+    const projectManager = req.body.projectManager;
 
     // we are creating a new object of the model
     const project = new Project({
