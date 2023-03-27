@@ -80,6 +80,7 @@ projectRoute.route("/projects/addBasicProjDetails").post(function (req, res) {
     const description = req.body.description;
     const technology = req.body.technology;
     const projectDeadLine = req.body.deadline;
+    const techLead = req.body.techlead;
     const initiatedOn = Date.now();
     const projectManager = "4";
 
@@ -91,6 +92,7 @@ projectRoute.route("/projects/addBasicProjDetails").post(function (req, res) {
       projectDeadLine,
       initiatedOn,
       projectManager,
+      techLead,
     });
 
     // we are saving the data to the database

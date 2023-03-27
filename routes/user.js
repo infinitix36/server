@@ -137,7 +137,7 @@ userRoute.route("/users/getDeveloper").get(function (req, res) {
 
 userRoute.route("/users/getTechLead").get(function (req, res) {
   User.find(
-    { userRoleName: "TechLead" },
+    { userRoleName: "Techlead" },
     { fname: 1, lname: 1 },
     (err, users) => {
       if (err) {
