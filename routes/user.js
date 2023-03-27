@@ -2,6 +2,17 @@ const express = require("express");
 const userRoute = express.Router();
 const User = require("../models/user.model");
 
+userRoute.route("/users/leave/:id").get(function(req, res) {
+  User.find({_id: req.params.id},{taken:1},(err,users)=>{
+    if(err) {
+      res.send(err);
+    }else {
+      res.json(users);
+    }
+
+  })
+})
+
 userRoute.route("/users/verifyuser").post(async (req, res) => {
   const result = req.body.result;
   const userID = req.body.userid;
