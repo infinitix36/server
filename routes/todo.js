@@ -82,9 +82,16 @@ toDoRoute.route("/todo/deletetask").post(function (req, res) {
   console.log(taskID);
   console.log(todoID);
   ToDo.findById(todoID, function (err, todo) {
+
+    //creates a new array with all elements which's task id doesn't match with the id requested
     todo.tasks = todo.tasks.filter((task) => task.taskid !== taskID);
+
+    //update the tasks field of the ToDo document with the specified ID, replacing the old array of tasks with a new array that doesn't include the task to be deleted.
     ToDo.updateOne(
-      { _id: todoID },
+      { _id: todoID }, //query object that specifies which document to update
+      //update object that specifies how to modify the document
+
+
       {
         $set: {
           tasks: todo.tasks,
@@ -106,5 +113,40 @@ toDoRoute.route("/todo/deletetask").post(function (req, res) {
       });
   });
 });
+
+
+// toDoRoute.route("/todo/deletetask/:todoid/:taskid").delete(function (req, res) {
+//   const todoID = req.params.todoid;
+//   const taskID = req.params.taskid;
+//   console.log(taskID);
+//   console.log(todoID);
+//   ToDo.findById(todoID, function (err, todo) {
+//     todo.tasks = todo.tasks.filter((task) => task.taskid !== taskID);
+//     console.log(todo.tasks)
+//     ToDo.updateOne(
+//       { _id: todoID },
+//       {
+//         $set: {
+//           tasks: todo.tasks,
+//         },
+//       }
+//     )
+//       .then((result) => {
+//         // console.log(result);
+//         return res.json({
+//           message: "Task Deleted",
+//           status: true,
+//         });
+//       })
+//       .catch((err) => {
+//         console.log(err);
+//         return res.json({
+//           message: "Error",
+//           status: false,
+//         });
+//       });
+//   });
+// });
+
 
 module.exports = toDoRoute;
