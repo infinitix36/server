@@ -4,16 +4,21 @@ const User = new mongoose.Schema(
     userRoleName: { type: String },
     fname: { type: String },
     lname: { type: String },
-    email: { type: String, required:true, unique:true },
+    email: { type: String, required: true, unique: true },
     phone: { type: String },
-    password: { type: String},
-    userStatus: { type: Boolean},
+    password: { type: String },
+    userStatus: { type: Boolean },
     orangeHrLink: { type: String },
     GitHubUsername: { type: String },
     userJiraLink: { type: String },
+
     userImage: [{ type: Object}],
     feedback: { type: String},
     rating: { type: String},
+    approveStatus:{type: Boolean, default: false},
+    submittedOn: {type: Date, default: new Date()},
+    taken: {type:String}
+
   },
   {
     collection: "userRoles",

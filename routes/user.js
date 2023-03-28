@@ -1,9 +1,83 @@
 const express = require("express");
 const userRoute = express.Router();
 const User = require("../models/user.model");
+const fetch = require('node-fetch');
 
-userRoute.route("/users/getRate").get(function (req, res) {
-  User.find({}, { fname: 1, rating: 1 }, (err, users) => {
+userRoute.route("/users/all").get(function (req, res) {
+  const { userRoleName, sortBy, sortOrder } = req.query;
+  const query = userRoleName ? { userRoleName } : {};
+  let sortCriteria = {};
+  if (sortBy === 'fname') {
+    sortCriteria.fname = sortOrder === 'asc' ? 1 : -1;
+  } else if (sortBy === 'rating') {
+    sortCriteria.rating = sortOrder === 'asc' ? 1 : -1;
+  }
+  User.find(query, { _id: 1, fname: 1, rating: 1 , GitHubUsername: 1, userRoleName:1 })
+      .sort(sortCriteria)
+      .exec((err, users) => {
+        if (err) {
+          res.send(err);
+        } else {
+          const parsedUsers = users.map(user => ({
+            _id: user._id,
+            fname: user.fname,
+            rating: parseInt(user.rating),
+            userRoleName: user.userRoleName,
+            GitHubUsername: user.GitHubUsername
+          }));
+          res.json(parsedUsers);
+        }
+      });
+});
+
+
+userRoute.route("/users/leave/:id").get(function(req, res) {
+  User.find({_id: req.params.id},{taken:1},(err,users)=>{
+    if(err) {
+      res.send(err);
+    }else {
+      res.json(users);
+    }
+
+  })
+})
+
+userRoute.route("/users/verifyuser").post(async (req, res) => {
+  const result = req.body.result;
+  const userID = req.body.userid;
+  if (result === "allow") {
+    User.updateOne({ _id: userID }, { $set: { approveStatus: true } })
+      .then((result) => {
+        console.log(result);
+        return res.json({
+          message: "User Verified Successfully",
+          status: true,
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        return res.json({
+          message: "Error in Verifying the User Role",
+          status: false,
+        });
+      });
+  } else if (result === "deny") {
+    const deletedDocument = await User.findByIdAndDelete(userID);
+    return res.json({
+      message: "User Deleted Successfully",
+      status: true,
+      data: deletedDocument,
+    });
+  } else {
+    return res.json({
+      message: "Unknown Status",
+      status: false,
+    });
+  }
+});
+
+userRoute.route("/users/usersToApproved").get(function (req, res) {
+  User.find({ approveStatus: false }, (err, users) => {
     if (err) {
       res.send(err);
     } else {
@@ -12,10 +86,26 @@ userRoute.route("/users/getRate").get(function (req, res) {
   });
 });
 
+
+userRoute.route("/users/getRate").get(function (req, res) {
+  User.find({}, { _id: 1, fname: 1, rating: 1 ,GitHubUsername:1 ,}, (err, users) => {
+    if (err) {
+      res.send(err);
+    } else {
+      const parsedUsers = users.map(user => ({
+        _id: user._id,
+        fname: user.fname,
+        rating: parseInt(user.rating)
+      }));
+      res.json(parsedUsers);
+    }
+  });
+});
+
 userRoute.route("/users/addRate").post(async (req, res) => {
   const rating = {
-    rating1: req.body.rating1,
-    rating2: req.body.rating2,
+    rating1: parseInt(req.body.rating1),
+    rating2: parseInt(req.body.rating2),
   };
   const rate = rating.rating1 + rating.rating2;
 
@@ -51,6 +141,8 @@ userRoute.route("/users/getFind").get(function (req, res) {
     }
   });
 });
+
+
 userRoute.route("/users/getBA").get(function (req, res) {
   User.find({ userRoleName: { $in: ["BA"] } }, (err, users) => {
     if (err) {
@@ -60,6 +152,8 @@ userRoute.route("/users/getBA").get(function (req, res) {
     }
   });
 });
+
+
 userRoute.route("/users/getQA").get(function (req, res) {
   User.find({ userRoleName: { $in: ["QA"] } }, (err, users) => {
     if (err) {
@@ -79,10 +173,9 @@ userRoute.route("/users/getDeveloper").get(function (req, res) {
     }
   });
 });
-
 userRoute.route("/users/getTechLead").get(function (req, res) {
   User.find(
-    { userRoleName: "TechLead" },
+    { userRoleName: "Techlead" },
     { fname: 1, lname: 1 },
     (err, users) => {
       if (err) {
@@ -137,8 +230,8 @@ userRoute.route("/users/getBA").get(function (req, res) {
   });
 });
 
-userRoute.route("/users/getTechlead/alphabet").get(function (req, res) {
-  userQuery = { userRoleName: "TeahLead" };
+userRoute.route("/users/getTechLead/alphabet").get(function (req, res) {
+  userQuery = { userRoleName: "Techlead" };
   sortQuery = { fname: 1 };
   User.find(userQuery, { fname: 1 }, (err, users) => {
     if (err) {
@@ -279,6 +372,19 @@ userRoute.route("/users/getDeveloper/alphabet").get(function (req, res) {
 //   ).sort(sortQuery);
 // });
 
-userRoute.route("/user/rating").get(function (req, res) {});
+
+
+userRoute.route('/users/getLogin').get(async function(req, res) {
+  const { GitHubUsername } = req.query;
+
+  // Make request to GitHub API to retrieve number of commits for user
+  const response = await fetch(`https://api.github.com/users/${GitHubUsername}/events`);
+  const events = await response.json();
+  const commits = events
+    .filter(event => event.type === 'PushEvent')
+    //.reduce((acc, event) => acc + event.payload.commits.length, 0);
+
+  res.json({ commits });
+});
 
 module.exports = userRoute;

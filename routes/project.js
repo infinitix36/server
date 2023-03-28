@@ -2,6 +2,63 @@ const express = require("express");
 const projectRoute = express.Router();
 const Project = require("../models/project.model");
 
+projectRoute.route("/projects/getFeedbacks/:userId").get(function (req, res) {
+  const userId = req.params.userId;
+  Project.find({ techLead: userId }, {feedBacks:1,projectName:1},(err, projects) => {
+    if (err) {
+      res.send(err);
+    } else {
+      res.json(projects);
+    }
+  });
+});
+projectRoute.route("/projects/getFeedback/:projectId").get(function (req, res) {
+  const projectId = req.params.projectId;
+  Project.find({ _id: projectId }, {feedBacks:1},(err, projects) => {
+    if (err) {
+      res.send(err);
+    } else {
+      res.json(projects);
+    }
+  });
+});
+
+projectRoute.route("/project/addFeed").post(function (req, res) {
+  const projectId = req.body.projectId;
+  const feedBacks = req.body.feedback;
+  const feedBy = req.body.feedBy;
+  const feedbyName= req.body.feedbyName;
+  
+  const newFeedBack = {
+    feedId: Date.now(),
+    feedback: feedBacks,
+    createdDate: Date.now(),
+    feedBy:feedBy,
+    feedbyName:feedbyName,
+  };
+
+
+  Project.findOneAndUpdate(
+    { _id: projectId },
+    { $push: { feedBacks: newFeedBack } },
+   
+    (err, projects) => {
+      if (err) {
+        return res.json({
+          message: "Error try again !",
+          status: false,
+        });
+      } else {
+        return res.json({
+          message: "feedback Added Successfully",
+          status: true,
+        });
+      }
+    }
+  );
+});
+
+
 projectRoute.route("/projects/getProjectDetails").get(function (req, res) {
   Project.find({}, (err, projects) => {
     if (err) {
@@ -32,8 +89,9 @@ projectRoute.route("/projects/addBasicProjDetails").post(function (req, res) {
     const description = req.body.description;
     const technology = req.body.technology;
     const projectDeadLine = req.body.deadline;
+    const techLead = req.body.techlead;
     const initiatedOn = Date.now();
-    const projectManager = "4";
+    const projectManager = req.body.projectManager;
 
     // we are creating a new object of the model
     const project = new Project({
@@ -43,6 +101,7 @@ projectRoute.route("/projects/addBasicProjDetails").post(function (req, res) {
       projectDeadLine,
       initiatedOn,
       projectManager,
+      techLead,
     });
 
     // we are saving the data to the database
