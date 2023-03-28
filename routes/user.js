@@ -2,19 +2,60 @@ const express = require("express");
 const userRoute = express.Router();
 const User = require("../models/user.model");
 
+userRoute.route("/users/leave/:id").get(function(req, res) {
+  User.find({_id: req.params.id},{taken:1},(err,users)=>{
+    if(err) {
+      res.send(err);
+    }else {
+      res.json(users);
+    }
 
+  })
+})
 
-userRoute
-  .route("/users/usersToApproved")
-  .get(function (req, res) {
-    User.find({ approveStatus: false }, (err, users) => {
-      if (err) {
-        res.send(err);
-      } else {
-        res.json(users);
-      }
+userRoute.route("/users/verifyuser").post(async (req, res) => {
+  const result = req.body.result;
+  const userID = req.body.userid;
+  if (result === "allow") {
+    User.updateOne({ _id: userID }, { $set: { approveStatus: true } })
+      .then((result) => {
+        console.log(result);
+        return res.json({
+          message: "User Verified Successfully",
+          status: true,
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        return res.json({
+          message: "Error in Verifying the User Role",
+          status: false,
+        });
+      });
+  } else if (result === "deny") {
+    const deletedDocument = await User.findByIdAndDelete(userID);
+    return res.json({
+      message: "User Deleted Successfully",
+      status: true,
+      data: deletedDocument,
     });
+  } else {
+    return res.json({
+      message: "Unknown Status",
+      status: false,
+    });
+  }
+});
+
+userRoute.route("/users/usersToApproved").get(function (req, res) {
+  User.find({ approveStatus: false }, (err, users) => {
+    if (err) {
+      res.send(err);
+    } else {
+      res.json(users);
+    }
   });
+});
 
 userRoute.route("/users/getRate").get(function (req, res) {
   User.find({}, { fname: 1, rating: 1 }, (err, users) => {
@@ -25,7 +66,6 @@ userRoute.route("/users/getRate").get(function (req, res) {
     }
   });
 });
-
 
 userRoute.route("/users/addRate").post(async (req, res) => {
   const rating = {
@@ -97,7 +137,7 @@ userRoute.route("/users/getDeveloper").get(function (req, res) {
 
 userRoute.route("/users/getTechLead").get(function (req, res) {
   User.find(
-    { userRoleName: "TechLead" },
+    { userRoleName: "Techlead" },
     { fname: 1, lname: 1 },
     (err, users) => {
       if (err) {

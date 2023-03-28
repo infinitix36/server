@@ -14,7 +14,6 @@ toDoRoute.route("/todo/addtask").post(function (req, res) {
     dueDate: dueDate,
   };
 
-
   ToDo.findOneAndUpdate(
     { userID: userID },
     { $push: { tasks: newTask } },
@@ -75,6 +74,37 @@ toDoRoute.route("/todo/markasdone").post(function (req, res) {
   });
 
   console.log(taskID);
+});
+
+toDoRoute.route("/todo/deletetask").post(function (req, res) {
+  const todoID = req.body.todoid;
+  const taskID = req.body.taskid;
+  console.log(taskID);
+  console.log(todoID);
+  ToDo.findById(todoID, function (err, todo) {
+    todo.tasks = todo.tasks.filter((task) => task.taskid !== taskID);
+    ToDo.updateOne(
+      { _id: todoID },
+      {
+        $set: {
+          tasks: todo.tasks,
+        },
+      }
+    )
+      .then((result) => {
+        return res.json({
+          message: "Task Deleted",
+          status: true,
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        return res.json({
+          message: "Error",
+          status: false,
+        });
+      });
+  });
 });
 
 module.exports = toDoRoute;
