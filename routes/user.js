@@ -173,20 +173,15 @@ userRoute.route("/users/getDeveloper").get(function (req, res) {
     }
   });
 });
+
 userRoute.route("/users/getTechLead").get(function (req, res) {
-  User.find(
-    { userRoleName: "Techlead" },
-    { fname: 1, lname: 1 },
-    (err, users) => {
-      if (err) {
-        res.send(err);
-      } else {
-        // const usersArray = projects.map((item) => item.users);
-        // res.json(usersArray);
-        res.json(users);
-      }
+  User.find({ userRoleName: { $in: ["Techlead"] } }, (err, users) => {
+    if (err) {
+      res.send(err);
+    } else {
+      res.json(users);
     }
-  );
+  });
 });
 
 userRoute.route("/users/getMembers").get(function (req, res) {
