@@ -80,7 +80,7 @@ userRoute.route("/users/addRate").post(async (req, res) => {
 
 userRoute.route("/users/getTechLead").get(function (req, res) {
   User.find(
-    { userRoleName: "TechLead" },
+    { userRoleName: "Techlead" },
     { fname: 1, lname: 1, GitHubUsername: 1 },
     (err, users) => {
       if (err) {
@@ -121,7 +121,7 @@ userRoute.route("/users/getContributors").get(function (req, res) {
 
 userRoute.route("/users/getBA").get(function (req, res) {
   User.find(
-    { userRoleName: "TeahLead" },
+    { userRoleName: "BA" },
     { fname: 1, lname: 1, GitHubUsername: 1 },
     (err, users) => {
       if (err) {
@@ -195,7 +195,7 @@ userRoute.route("/users/getBA").get(function (req, res) {
 
 
 userRoute.route("/users/getTechlead/alphabet").get(function (req, res) {
-  userQuery = { userRoleName: "TechLead" };
+  userQuery = { userRoleName: "Techlead" };
   sortQuery = { fname: 1 };
   User.find(
     userQuery,{fname:1},
