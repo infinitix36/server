@@ -32,7 +32,7 @@ authRoute.route("/authentication/register").post(function (req, res) {
   const email = req.body.email;
   const phone = req.body.phone;
   const orangechangeHrLink = req.body.orangechangeHrLink;
-  const userGitHubLink = req.body.githubLink;
+  const GitHubUsername = req.body.GitHubUsername;
 
   const userJiraLink = req.body.userJiraLink;
   const password = req.body.password;
@@ -56,7 +56,7 @@ authRoute.route("/authentication/register").post(function (req, res) {
       email: email,
       phone: phone,
       orangechangeHrLink: orangechangeHrLink,
-      userGitHubLink: userGitHubLink,
+      GitHubUsername: GitHubUsername,
       userJiraLink: userJiraLink,
       password: hashedPassword,
 
@@ -88,7 +88,7 @@ authRoute.route("/authentication/register").post(function (req, res) {
 authRoute.route("/authentication/login").post(function (req, res) {
   const email = req.body.email;
   const password = req.body.password;
-  const userRoleName = req.body.userRoleName;
+  
 
   
 
