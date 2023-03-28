@@ -3,7 +3,24 @@ const userRoute = express.Router();
 const User = require("../models/user.model");
 const fetch = require('node-fetch');
 
-
+userRoute.route("/users/all").get(function (req, res) {
+  const { userRoleName } = req.query;
+  const query = userRoleName ? { userRoleName } : {};
+  User.find(query, { _id: 1, fname: 1, rating: 1 , GitHubUsername: 1, userRoleName:1, }, (err, users) => {
+    if (err) {
+      res.send(err);
+    } else {
+      const parsedUsers = users.map(user => ({
+        _id: user._id,
+        fname: user.fname,
+        rating: parseInt(user.rating),
+        userRoleName: user.userRoleName,
+        GitHubUsername: user.GitHubUsername
+      }));
+      res.json(parsedUsers);
+    }
+  });
+});
 
 userRoute.route("/users/getRate").get(function (req, res) {
   User.find({}, { _id: 1, fname: 1, rating: 1 ,GitHubUsername:1 ,}, (err, users) => {
