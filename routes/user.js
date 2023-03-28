@@ -4,22 +4,30 @@ const User = require("../models/user.model");
 const fetch = require('node-fetch');
 
 userRoute.route("/users/all").get(function (req, res) {
-  const { userRoleName } = req.query;
+  const { userRoleName, sortBy, sortOrder } = req.query;
   const query = userRoleName ? { userRoleName } : {};
-  User.find(query, { _id: 1, fname: 1, rating: 1 , GitHubUsername: 1, userRoleName:1, }, (err, users) => {
-    if (err) {
-      res.send(err);
-    } else {
-      const parsedUsers = users.map(user => ({
-        _id: user._id,
-        fname: user.fname,
-        rating: parseInt(user.rating),
-        userRoleName: user.userRoleName,
-        GitHubUsername: user.GitHubUsername
-      }));
-      res.json(parsedUsers);
-    }
-  });
+  let sortCriteria = {};
+  if (sortBy === 'fname') {
+    sortCriteria.fname = sortOrder === 'asc' ? 1 : -1;
+  } else if (sortBy === 'rating') {
+    sortCriteria.rating = sortOrder === 'asc' ? 1 : -1;
+  }
+  User.find(query, { _id: 1, fname: 1, rating: 1 , GitHubUsername: 1, userRoleName:1 })
+      .sort(sortCriteria)
+      .exec((err, users) => {
+        if (err) {
+          res.send(err);
+        } else {
+          const parsedUsers = users.map(user => ({
+            _id: user._id,
+            fname: user.fname,
+            rating: parseInt(user.rating),
+            userRoleName: user.userRoleName,
+            GitHubUsername: user.GitHubUsername
+          }));
+          res.json(parsedUsers);
+        }
+      });
 });
 
 userRoute.route("/users/getRate").get(function (req, res) {
@@ -72,8 +80,8 @@ userRoute.route("/users/addRate").post(async (req, res) => {
 
 userRoute.route("/users/getTechLead").get(function (req, res) {
   User.find(
-    { useRoleName: "TeahLead" },
-    { fname: 1, lname: 1, username: 1 },
+    { userRoleName: "TechLead" },
+    { fname: 1, lname: 1, GitHubUsername: 1 },
     (err, users) => {
       if (err) {
         res.send(err);
@@ -82,7 +90,7 @@ userRoute.route("/users/getTechLead").get(function (req, res) {
         // res.json(usersArray);
         let newUsers = []
         for(const user of users) {
-          fetch(`https://api.github.com/users/${user.username}`)
+          fetch(`https://api.github.com/users/${user.GitHubUsername}`)
           .then(response=>response.json().then(data=>{
               newUsers.push({...user._doc, avatar: data.avatar_url})
           }))
@@ -96,7 +104,7 @@ userRoute.route("/users/getTechLead").get(function (req, res) {
 
 userRoute.route("/users/getContributors").get(function (req, res) {
   User.find(
-    { useRoleName: { $in: ["Developer", "QA", "BA"] } },
+    { userRoleName: { $in: ["Developer", "QA", "BA"] } },
     { fname: 1, lname: 1 },
     (err, users) => {
       if (err) {
@@ -113,8 +121,8 @@ userRoute.route("/users/getContributors").get(function (req, res) {
 
 userRoute.route("/users/getBA").get(function (req, res) {
   User.find(
-    { useRoleName: "TeahLead" },
-    { fname: 1, lname: 1, username: 1 },
+    { userRoleName: "TeahLead" },
+    { fname: 1, lname: 1, GitHubUsername: 1 },
     (err, users) => {
       if (err) {
         res.send(err);
@@ -123,7 +131,7 @@ userRoute.route("/users/getBA").get(function (req, res) {
         // res.json(usersArray);
         let newUsers = [] 
         for(const user of users) {
-          fetch(`https://api.github.com/users/${user.username}`)
+          fetch(`https://api.github.com/users/${user.GitHubUsername}`)
           .then(response=>response.json().then(data=>{
               newUsers.push({...user._doc, avatar: data.avatar_url})
           }))
@@ -187,7 +195,7 @@ userRoute.route("/users/getBA").get(function (req, res) {
 
 
 userRoute.route("/users/getTechlead/alphabet").get(function (req, res) {
-  userQuery = { useRoleName: "TeahLead" };
+  userQuery = { userRoleName: "TechLead" };
   sortQuery = { fname: 1 };
   User.find(
     userQuery,{fname:1},
@@ -202,7 +210,7 @@ userRoute.route("/users/getTechlead/alphabet").get(function (req, res) {
 });
 
 userRoute.route("/users/getQA/alphabet").get(function (req, res) {
-  userQuery = { useRoleName: "QA" };
+  userQuery = { userRoleName: "QA" };
   sortQuery = { fname: 1 };
   User.find(
     userQuery, {fname:1, GitHubUsername:1},
@@ -219,7 +227,7 @@ userRoute.route("/users/getQA/alphabet").get(function (req, res) {
 
 
 userRoute.route("/users/getBA/alphabet").get(function (req, res) {
-  userQuery = { useRoleName: "BA" };
+  userQuery = { userRoleName: "BA" };
   sortQuery = { fname: 1 };
   User.find(
     userQuery, {fname:1},
@@ -236,7 +244,7 @@ userRoute.route("/users/getBA/alphabet").get(function (req, res) {
 
 
 userRoute.route("/users/getDeveloper/alphabet").get(function (req, res) {
-  userQuery = { useRoleName: "Developer" };
+  userQuery = { userRoleName: "Developer" };
   sortQuery = { fname: 1 };
   User.find(
     userQuery, {fname:1},
@@ -252,10 +260,10 @@ userRoute.route("/users/getDeveloper/alphabet").get(function (req, res) {
 
 
 userRoute.route('/users/getLogin').get(async function(req, res) {
-  const { username } = req.query;
+  const { GitHubUsername } = req.query;
 
   // Make request to GitHub API to retrieve number of commits for user
-  const response = await fetch(`https://api.github.com/users/${username}/events`);
+  const response = await fetch(`https://api.github.com/users/${GitHubUsername}/events`);
   const events = await response.json();
   const commits = events
     .filter(event => event.type === 'PushEvent')
@@ -263,15 +271,6 @@ userRoute.route('/users/getLogin').get(async function(req, res) {
 
   res.json({ commits });
 });
-
-
-
-
-
-
-
-
-
 
 
 
