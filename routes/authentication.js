@@ -3,7 +3,7 @@ const bcrypt = require("bcrypt");
 const authRoute = express.Router();
 const User = require("../models/user.model");
 const jwt = require("jsonwebtoken");
-const expTime = "1m";
+const expTime = "1h";
 authRoute.route("/authentication/verifyToken").post(async (req, res) => {
   const token = req.body.token;
   jwt.verify(token, "universe", function (err, decoded) {
@@ -39,6 +39,10 @@ authRoute.route("/authentication/register").post(function (req, res) {
   const confirmPassword = req.body.confirmPassword;
 
 
+
+    
+
+
   // Hash the password using bcrypt
   bcrypt.hash(password, 10, function (err, hashedPassword) {
     if (err) {
@@ -57,6 +61,8 @@ authRoute.route("/authentication/register").post(function (req, res) {
       password: hashedPassword,
 
       confirmPassword: confirmPassword,
+      
+        
 
     });
 
@@ -82,6 +88,9 @@ authRoute.route("/authentication/register").post(function (req, res) {
 authRoute.route("/authentication/login").post(function (req, res) {
   const email = req.body.email;
   const password = req.body.password;
+  const userRoleName = req.body.userRoleName;
+
+  
 
   User.findOne({ email: email }, function (err, user) {
     if (err) {
@@ -109,6 +118,9 @@ authRoute.route("/authentication/login").post(function (req, res) {
           message: "Logged in successfully",
           status: true,
           token: token,
+          isAuthenticated: true
+          
+
         });
       } else {
         return res.status(401).send({ message: "Incorrect email or password" });
