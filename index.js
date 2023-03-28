@@ -27,6 +27,34 @@ app.get("/", (req, res) => {
   res.send("Server is running on Port " + PORT);
 });
 
+app.get("/sendmail", async (req, res) => {
+  const mailOptions = {
+    to: "matheshyogeswaran@gmail.com",
+    subject: "Mathesh",
+    html: "This is New Mail !",
+  };
+  const success = await sendMail(mailOptions);
+  if (success) {
+    return res.json({ status: true });
+  } else {
+    return res.json({ status: false });
+  }
+});
+
+app.get("/sendmailTo/:email", async (req, res) => {
+  const mailOptions = {
+    to: req.params.email,
+    subject: "Subject about verify",
+    html: "This is Test Mail !",
+  };
+  const success = await sendMail(mailOptions);
+  if (success) {
+    return res.json({ status: true });
+  } else {
+    return res.json({ status: false });
+  }
+});
+
 mongoose.set("strictQuery", false);
 mongoose
   .connect("mongodb://127.0.0.1:27017/app", {

@@ -2,7 +2,16 @@ const express = require("express");
 const projectRoute = express.Router();
 const Project = require("../models/project.model");
 
-
+projectRoute.route("/projects/getFeedback/:userId").get(function (req, res) {
+  const userId = req.params.userId;
+  Project.find({ techLead: userId }, {feedBacks:1,projectName:1},(err, projects) => {
+    if (err) {
+      res.send(err);
+    } else {
+      res.json(projects);
+    }
+  });
+});
 projectRoute.route("/projects/getFeedback/:projectId").get(function (req, res) {
   const projectId = req.params.projectId;
   Project.find({ _id: projectId }, {feedBacks:1},(err, projects) => {
