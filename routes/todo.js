@@ -82,6 +82,7 @@ toDoRoute.route("/todo/deletetask").post(function (req, res) {
   console.log(taskID);
   console.log(todoID);
   ToDo.findById(todoID, function (err, todo) {
+
     //creates a new array with all elements which's task id doesn't match with the id requested
     todo.tasks = todo.tasks.filter((task) => task.taskid !== taskID);
 
@@ -89,6 +90,8 @@ toDoRoute.route("/todo/deletetask").post(function (req, res) {
     ToDo.updateOne(
       { _id: todoID }, //query object that specifies which document to update
       //update object that specifies how to modify the document
+
+
       {
         $set: {
           tasks: todo.tasks,
@@ -110,6 +113,7 @@ toDoRoute.route("/todo/deletetask").post(function (req, res) {
       });
   });
 });
+
 
 // toDoRoute.route("/todo/deletetask/:todoid/:taskid").delete(function (req, res) {
 //   const todoID = req.params.todoid;
@@ -143,5 +147,6 @@ toDoRoute.route("/todo/deletetask").post(function (req, res) {
 //       });
 //   });
 // });
+
 
 module.exports = toDoRoute;

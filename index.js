@@ -21,9 +21,38 @@ app.use(require("./routes/project"));
 app.use(require("./routes/user"));
 app.use(require("./routes/todo"));
 app.use(require("./routes/authentication"));
+app.use(require("./routes/git"));
 
 app.get("/", (req, res) => {
   res.send("Server is running on Port " + PORT);
+});
+
+app.get("/sendmail", async (req, res) => {
+  const mailOptions = {
+    to: "matheshyogeswaran@gmail.com",
+    subject: "Mathesh",
+    html: "This is New Mail !",
+  };
+  const success = await sendMail(mailOptions);
+  if (success) {
+    return res.json({ status: true });
+  } else {
+    return res.json({ status: false });
+  }
+});
+
+app.get("/sendmailTo/:email", async (req, res) => {
+  const mailOptions = {
+    to: req.params.email,
+    subject: "Subject about verify",
+    html: "This is Test Mail !",
+  };
+  const success = await sendMail(mailOptions);
+  if (success) {
+    return res.json({ status: true });
+  } else {
+    return res.json({ status: false });
+  }
 });
 
 mongoose.set("strictQuery", false);
@@ -35,7 +64,7 @@ mongoose
   })
   .then(() => {
     app.listen(PORT, () => {
-      console.log("Node Server running on port "+PORT);
+      console.log("Node Server running on port " + PORT);
     });
     console.log("Database connected!");
   })

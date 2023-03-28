@@ -16,6 +16,9 @@ const Project = new mongoose.Schema(
     techLead: { type: String },
     contributors: { type: Object },
 
+    feedBacks: [{ type: Object }],
+
+
   },
   {
     collection: "projects",
