@@ -17,6 +17,7 @@ const Project = new mongoose.Schema(
     contributors: { type: Object },
 
     feedBacks: [{ type: Object }],
+    feedBacksQA: [{ type: Object }],
 
 
   },
