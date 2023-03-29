@@ -3,6 +3,7 @@ const userRoute = express.Router();
 const User = require("../models/user.model");
 const fetch = require('node-fetch');
 
+
 userRoute.route("/users/all").get(function (req, res) {
   const { userRoleName, sortBy, sortOrder } = req.query;
   const query = userRoleName ? { userRoleName } : {};
@@ -30,7 +31,7 @@ userRoute.route("/users/all").get(function (req, res) {
       });
 });
 
-
+//orange hr leave fetch
 userRoute.route("/users/leave/:id").get(function(req, res) {
   User.find({_id: req.params.id},{taken:1},(err,users)=>{
     if(err) {
@@ -41,7 +42,7 @@ userRoute.route("/users/leave/:id").get(function(req, res) {
 
   })
 })
-
+//verify user 
 userRoute.route("/users/verifyuser").post(async (req, res) => {
   const result = req.body.result;
   const userID = req.body.userid;
@@ -76,6 +77,7 @@ userRoute.route("/users/verifyuser").post(async (req, res) => {
   }
 });
 
+//get which users a want to approve by admin
 userRoute.route("/users/usersToApproved").get(function (req, res) {
   User.find({ approveStatus: false }, (err, users) => {
     if (err) {
@@ -86,7 +88,7 @@ userRoute.route("/users/usersToApproved").get(function (req, res) {
   });
 });
 
-
+// get rate of users ratings
 userRoute.route("/users/getRate").get(function (req, res) {
   User.find({}, { _id: 1, fname: 1, rating: 1 ,GitHubUsername:1 ,}, (err, users) => {
     if (err) {
@@ -102,6 +104,7 @@ userRoute.route("/users/getRate").get(function (req, res) {
   });
 });
 
+// add ratings for user
 userRoute.route("/users/addRate").post(async (req, res) => {
   const rating = {
     rating1: parseInt(req.body.rating1),
@@ -132,6 +135,7 @@ userRoute.route("/users/addRate").post(async (req, res) => {
     });
 });
 
+// get find by name
 userRoute.route("/users/getFind").get(function (req, res) {
   User.find({ fname: { $in: ["MA"] } }, (err, users) => {
     if (err) {
@@ -142,7 +146,7 @@ userRoute.route("/users/getFind").get(function (req, res) {
   });
 });
 
-
+//get BA users
 userRoute.route("/users/getBA").get(function (req, res) {
   User.find({ userRoleName: { $in: ["BA"] } }, (err, users) => {
     if (err) {
@@ -153,7 +157,7 @@ userRoute.route("/users/getBA").get(function (req, res) {
   });
 });
 
-
+// get QA users
 userRoute.route("/users/getQA").get(function (req, res) {
   User.find({ userRoleName: { $in: ["QA"] } }, (err, users) => {
     if (err) {
@@ -164,6 +168,7 @@ userRoute.route("/users/getQA").get(function (req, res) {
   });
 });
 
+//get developer
 userRoute.route("/users/getDeveloper").get(function (req, res) {
   User.find({ userRoleName: { $in: ["Developer"] } }, (err, users) => {
     if (err) {
@@ -173,6 +178,8 @@ userRoute.route("/users/getDeveloper").get(function (req, res) {
     }
   });
 });
+
+// get techlead
 userRoute.route("/users/getTechLead").get(function (req, res) {
   User.find(
     { userRoleName: "Techlead" },
@@ -189,6 +196,7 @@ userRoute.route("/users/getTechLead").get(function (req, res) {
   );
 });
 
+// get members
 userRoute.route("/users/getMembers").get(function (req, res) {
   User.find(
     { userRoleName: { $in: ["developer", "QA", "BA"] } },
@@ -203,6 +211,7 @@ userRoute.route("/users/getMembers").get(function (req, res) {
   );
 });
 
+// get all contributors
 userRoute.route("/users/getContributors").get(function (req, res) {
   User.find(
     { userRoleName: { $in: ["Developer", "QA", "BA"] } },
