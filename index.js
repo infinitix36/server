@@ -22,6 +22,7 @@ app.use(require("./routes/user"));
 app.use(require("./routes/todo"));
 app.use(require("./routes/authentication"));
 app.use(require("./routes/git"));
+// app.use(require("./routes/notification"));
 
 app.get("/", (req, res) => {
   res.send("Server is running on Port " + PORT);
