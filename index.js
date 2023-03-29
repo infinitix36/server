@@ -3,6 +3,7 @@ const app = express();
 const cors = require("cors");
 const mongoose = require("mongoose");
 const PORT = 8000;
+const sendMail = require("./mail/mailer");
 // if we want to test with postman x-www-form-urlencoded
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
