@@ -4,6 +4,8 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 const PORT = 8000;
 const sendMail = require("./mail/mailer");
+require("dotenv").config();
+
 // if we want to test with postman x-www-form-urlencoded
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
@@ -59,7 +61,7 @@ app.get("/sendmailTo/:email", async (req, res) => {
 
 mongoose.set("strictQuery", false);
 mongoose
-  .connect("mongodb://127.0.0.1:27017/app", {
+  .connect(process.env.DATABASE_URL, {
     useUnifiedTopology: true,
     useNewUrlParser: true,
     autoIndex: true,
