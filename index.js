@@ -25,6 +25,7 @@ app.use(require("./routes/user"));
 app.use(require("./routes/todo"));
 app.use(require("./routes/authentication"));
 app.use(require("./routes/git"));
+app.use(require("./routes/jira"));
 // app.use(require("./routes/notification"));
 
 app.get("/", (req, res) => {
