@@ -40,4 +40,15 @@ jiraRoute.get("/issues", async (req, res) => {
   }
 });
 
+
+jiraRoute.route("/jira/:projectName").get(function (req, res) {
+  const projectName = req.params.projectName;
+  Issue.find({ projectName: projectName }, {}, (err, issues) => {
+    if (err) {
+      res.send(err);
+    } else {
+      res.json(issues);
+    }
+  });
+});
 module.exports = jiraRoute;
