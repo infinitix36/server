@@ -3,7 +3,7 @@ const bcrypt = require("bcrypt");
 const authRoute = express.Router();
 const User = require("../models/user.model");
 const jwt = require("jsonwebtoken");
-const expTime = "1m";
+const expTime = "1d";
 authRoute.route("/authentication/verifyToken").post(async (req, res) => {
   const token = req.body.token;
   jwt.verify(token, "universe", function (err, decoded) {

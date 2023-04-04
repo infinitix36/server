@@ -4,17 +4,21 @@ const Project = require("../models/project.model");
 
 projectRoute.route("/projects/getFeedbacks/:userId").get(function (req, res) {
   const userId = req.params.userId;
-  Project.find({ techLead: userId }, {feedBacks:1,projectName:1},(err, projects) => {
-    if (err) {
-      res.send(err);
-    } else {
-      res.json(projects);
+  Project.find(
+    { techLead: userId },
+    { feedBacks: 1, projectName: 1 },
+    (err, projects) => {
+      if (err) {
+        res.send(err);
+      } else {
+        res.json(projects);
+      }
     }
-  });
+  );
 });
 projectRoute.route("/projects/getFeedback/:projectId").get(function (req, res) {
   const projectId = req.params.projectId;
-  Project.find({ _id: projectId }, {feedBacks:1},(err, projects) => {
+  Project.find({ _id: projectId }, { feedBacks: 1 }, (err, projects) => {
     if (err) {
       res.send(err);
     } else {
@@ -22,26 +26,70 @@ projectRoute.route("/projects/getFeedback/:projectId").get(function (req, res) {
     }
   });
 });
+projectRoute
+  .route("/projects/getFeedbackQA/:projectId")
+  .get(function (req, res) {
+    const projectId = req.params.projectId;
+    Project.find({ _id: projectId }, { feedBacksQA: 1 }, (err, projects) => {
+      if (err) {
+        res.send(err);
+      } else {
+        res.json(projects);
+      }
+    });
+  });
 
-projectRoute.route("/project/addFeed").post(function (req, res) {
+projectRoute.route("/project/addFeedQA").post(function (req, res) {
   const projectId = req.body.projectId;
   const feedBacks = req.body.feedback;
   const feedBy = req.body.feedBy;
-  const feedbyName= req.body.feedbyName;
-  
+  const feedbyName = req.body.feedbyName;
+
   const newFeedBack = {
     feedId: Date.now(),
     feedback: feedBacks,
     createdDate: Date.now(),
-    feedBy:feedBy,
-    feedbyName:feedbyName,
+    feedBy: feedBy,
+    feedbyName: feedbyName,
   };
 
+  Project.findOneAndUpdate(
+    { _id: projectId },
+    { $push: { feedBacksQA: newFeedBack } },
+
+    (err, projects) => {
+      if (err) {
+        return res.json({
+          message: "Error try again !",
+          status: false,
+        });
+      } else {
+        return res.json({
+          message: "feedback Added Successfully",
+          status: true,
+        });
+      }
+    }
+  );
+});
+projectRoute.route("/project/addFeed").post(function (req, res) {
+  const projectId = req.body.projectId;
+  const feedBacks = req.body.feedback;
+  const feedBy = req.body.feedBy;
+  const feedbyName = req.body.feedbyName;
+
+  const newFeedBack = {
+    feedId: Date.now(),
+    feedback: feedBacks,
+    createdDate: Date.now(),
+    feedBy: feedBy,
+    feedbyName: feedbyName,
+  };
 
   Project.findOneAndUpdate(
     { _id: projectId },
     { $push: { feedBacks: newFeedBack } },
-   
+
     (err, projects) => {
       if (err) {
         return res.json({
@@ -58,6 +106,29 @@ projectRoute.route("/project/addFeed").post(function (req, res) {
   );
 });
 
+projectRoute
+  .route("/projects/getProjectDetailsTL/:id")
+  .get(function (req, res) {
+    const id = req.params.id;
+    Project.find({ techLead: `${id}` }, { projectName: 1 }, (err, projects) => {
+      if (err) {
+        res.send(err);
+      } else {
+        res.json(projects);
+      }
+    });
+  });
+
+projectRoute.route("/projects/getProjectDetails/:id").get(function (req, res) {
+  const id = req.params.id;
+  Project.find({ "contributors.value": `${id}` }, (err, projects) => {
+    if (err) {
+      res.send(err);
+    } else {
+      res.json(projects);
+    }
+  });
+});
 
 projectRoute.route("/projects/getProjectDetails").get(function (req, res) {
   Project.find({}, (err, projects) => {
