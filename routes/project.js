@@ -29,6 +29,19 @@ projectRoute.route("/projects/getFeedback/:projectId").get(function (req, res) {
     }
   });
 });
+projectRoute
+  .route("/projects/getFeedbackQA/:projectId")
+  .get(function (req, res) {
+    const projectId = req.params.projectId;
+    Project.find({ _id: projectId }, { feedBacksQA: 1 }, (err, projects) => {
+      if (err) {
+        res.send(err);
+      } else {
+        res.json(projects);
+      }
+    });
+  });
+
 
 // get all feedback comment by QA
 projectRoute
@@ -45,6 +58,7 @@ projectRoute
   });
 
   //add feedback comment by QA
+
 projectRoute.route("/project/addFeedQA").post(function (req, res) {
   const projectId = req.body.projectId;
   const feedBacks = req.body.feedback;
@@ -78,7 +92,9 @@ projectRoute.route("/project/addFeedQA").post(function (req, res) {
     }
   );
 });
+
 //add feedback for project by Techleads
+
 projectRoute.route("/project/addFeed").post(function (req, res) {
   const projectId = req.body.projectId;
   const feedBacks = req.body.feedback;
@@ -113,7 +129,9 @@ projectRoute.route("/project/addFeed").post(function (req, res) {
   );
 });
 
+
 // only get project details of specific tech lead
+
 projectRoute
   .route("/projects/getProjectDetailsTL/:id")
   .get(function (req, res) {
@@ -127,7 +145,9 @@ projectRoute
     });
   });
 
+
   // get project details by if he is a contibutor of project
+
 projectRoute.route("/projects/getProjectDetails/:id").get(function (req, res) {
   const id = req.params.id;
   Project.find({ "contributors.value": `${id}` }, (err, projects) => {

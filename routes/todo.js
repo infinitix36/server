@@ -16,8 +16,8 @@ toDoRoute.route("/todo/addtask").post(function (req, res) {
 
   ToDo.findOneAndUpdate(
     { userID: userID },
-    { $push: { tasks: newTask } },
-    { upsert: true, new: true },
+    { $push: { tasks: newTask } }, // add new task 
+    { upsert: true, new: true }, //updating or inserting a document and returning the updated document in a single operation.
     (err, user) => {
       if (err) {
         return res.json({
