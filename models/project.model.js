@@ -16,8 +16,8 @@ const Project = new mongoose.Schema(
     techLead: { type: String },
     contributors: { type: Object },
     feedBacks: [{ type: Object }],
-    commentByQA:[{type: Object}]
 
+    feedBacksQA: [{ type: Object }],
 
   },
   {

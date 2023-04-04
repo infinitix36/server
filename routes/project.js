@@ -2,6 +2,7 @@ const express = require("express");
 const projectRoute = express.Router();
 const Project = require("../models/project.model");
 
+// get feedbacks of which he is the techlead sent user id by params
 projectRoute.route("/projects/getFeedbacks/:userId").get(function (req, res) {
   const userId = req.params.userId;
   Project.find(
@@ -16,6 +17,8 @@ projectRoute.route("/projects/getFeedbacks/:userId").get(function (req, res) {
     }
   );
 });
+
+// get all feedbacks by project id
 projectRoute.route("/projects/getFeedback/:projectId").get(function (req, res) {
   const projectId = req.params.projectId;
   Project.find({ _id: projectId }, { feedBacks: 1 }, (err, projects) => {
@@ -38,6 +41,23 @@ projectRoute
       }
     });
   });
+
+
+// get all feedback comment by QA
+projectRoute
+  .route("/projects/getFeedbackQA/:projectId")
+  .get(function (req, res) {
+    const projectId = req.params.projectId;
+    Project.find({ _id: projectId }, { feedBacksQA: 1 }, (err, projects) => {
+      if (err) {
+        res.send(err);
+      } else {
+        res.json(projects);
+      }
+    });
+  });
+
+  //add feedback comment by QA
 
 projectRoute.route("/project/addFeedQA").post(function (req, res) {
   const projectId = req.body.projectId;
@@ -72,6 +92,9 @@ projectRoute.route("/project/addFeedQA").post(function (req, res) {
     }
   );
 });
+
+//add feedback for project by Techleads
+
 projectRoute.route("/project/addFeed").post(function (req, res) {
   const projectId = req.body.projectId;
   const feedBacks = req.body.feedback;
@@ -106,6 +129,9 @@ projectRoute.route("/project/addFeed").post(function (req, res) {
   );
 });
 
+
+// only get project details of specific tech lead
+
 projectRoute
   .route("/projects/getProjectDetailsTL/:id")
   .get(function (req, res) {
@@ -119,6 +145,9 @@ projectRoute
     });
   });
 
+
+  // get project details by if he is a contibutor of project
+
 projectRoute.route("/projects/getProjectDetails/:id").get(function (req, res) {
   const id = req.params.id;
   Project.find({ "contributors.value": `${id}` }, (err, projects) => {
@@ -130,6 +159,7 @@ projectRoute.route("/projects/getProjectDetails/:id").get(function (req, res) {
   });
 });
 
+// get project details 
 projectRoute.route("/projects/getProjectDetails").get(function (req, res) {
   Project.find({}, (err, projects) => {
     if (err) {
@@ -140,6 +170,7 @@ projectRoute.route("/projects/getProjectDetails").get(function (req, res) {
   });
 });
 
+//get project details which are fill by project manager but did not fill by techlead
 projectRoute
   .route("/projects/getIncompleteProjectDetails")
   .get(function (req, res) {
@@ -152,6 +183,7 @@ projectRoute
     });
   });
 
+  //add basic project details by project manager
 projectRoute.route("/projects/addBasicProjDetails").post(function (req, res) {
   try {
     // variable should be in the name as in the model
@@ -199,6 +231,7 @@ projectRoute.route("/projects/addBasicProjDetails").post(function (req, res) {
   }
 });
 
+// add extra project details
 projectRoute.route("/projects/addExtraProjDetails").post(async (req, res) => {
   const gitHubLink = req.body.gitHubLink;
   const jiraLink = req.body.jiraLink;

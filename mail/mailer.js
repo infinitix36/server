@@ -10,7 +10,7 @@ const transporter = nodemailer.createTransport({
     rejectUnauthorized: false
   }
 });
-
+//function for sent mail
 async function sendMail(mailData) {
   console.log("Mail Service Called.");
   const mailOptions = {
