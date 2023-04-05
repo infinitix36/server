@@ -10,7 +10,7 @@ jiraRoute.get("/issues", async (req, res) => {
     const jiraDomain = "dreamshack.atlassian.net";
     const username = "dreamshack1999@gmail.com";
     const apiToken =
-      "ATATT3xFfGF0e6CUdT-56AvrnKIEHnJHi7kO-HgN8QT9BzheNzf_InD5GV_nlQjmhJhUOZLUKj-tH0lsh_q6M4sqt3rQ94gbgOVAaq2bkAwJXXwxE0iAlYKRNhFck4npLKur-0vBB5IszXsPnQmUMDdPLHRkX0Deg3an8625DVY5grX0K8cLypQ=77274B81";
+      `${process.env.JIRA_API_TOKEN}`;
     const url = `https://${jiraDomain}/rest/api/2/search?jql=`;
     const auth = {
       username: username,
