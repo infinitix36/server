@@ -2,6 +2,27 @@ const express = require("express");
 const projectRoute = express.Router();
 const Project = require("../models/project.model");
 
+// Define the route for updating the options for the "description" field
+projectRoute.put('/projects/:projectId/description', async (req, res) => {
+  try {
+    const projectId = req.params.projectId;
+    const descriptionOptions = req.body;
+
+    // Update the options for the "description" field using the findByIdAndUpdate() method
+    const updatedProject = await Project.findByIdAndUpdate(projectId, { description: descriptionOptions }, { new: true });
+
+    if (!updatedProject) {
+      return res.status(404).json({ error: 'Project not found' });
+    }
+
+    res.json(updatedProject);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
 // get feedbacks of which he is the techlead sent user id by params
 projectRoute.route("/projects/getFeedbacks/:userId").get(function (req, res) {
   const userId = req.params.userId;
