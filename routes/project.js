@@ -169,4 +169,5 @@ projectRoute.route("/projects/addExtraProjDetails").post(async (req, res) => {
       });
     });
 });
+
 module.exports = projectRoute;
