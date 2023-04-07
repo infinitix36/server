@@ -24,7 +24,6 @@ authRoute.route("/authentication/verifyToken").post(async (req, res) => {
 });
 
 authRoute.route("/authentication/register").post(function (req, res) {
-
   const userRoleName = req.body.userRoleName;
   const fname = req.body.fname;
   const lname = req.body.lname;
@@ -37,11 +36,6 @@ authRoute.route("/authentication/register").post(function (req, res) {
   const userJiraLink = req.body.userJiraLink;
   const password = req.body.password;
   const confirmPassword = req.body.confirmPassword;
-
-
-
-    
-
 
   // Hash the password using bcrypt
   bcrypt.hash(password, 10, function (err, hashedPassword) {
@@ -61,9 +55,6 @@ authRoute.route("/authentication/register").post(function (req, res) {
       password: hashedPassword,
 
       confirmPassword: confirmPassword,
-      
-        
-
     });
 
     // Attempt to save the user's data to the database
@@ -88,9 +79,6 @@ authRoute.route("/authentication/register").post(function (req, res) {
 authRoute.route("/authentication/login").post(function (req, res) {
   const email = req.body.email;
   const password = req.body.password;
-  
-
-  
 
   User.findOne({ email: email }, function (err, user) {
     if (err) {
@@ -118,9 +106,7 @@ authRoute.route("/authentication/login").post(function (req, res) {
           message: "Logged in successfully",
           status: true,
           token: token,
-          isAuthenticated: true
-          
-
+          isAuthenticated: true,
         });
       } else {
         return res.status(401).send({ message: "Incorrect email or password" });
