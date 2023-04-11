@@ -1,11 +1,10 @@
-const mongoose = require("mongoose");
-const Git = new mongoose.Schema(
-  {
-    pName: { type: String, required: true },
-    commitDetails: [{ type: Object }],
-    
-  }
-  
-);
-const model = mongoose.model("GitData", Git);
-module.exports = model;
+const mongoose = require('mongoose');
+
+const contributorCommitCountSchema = new mongoose.Schema({
+  contributor: String,
+  count: Number
+});
+
+const ContributorCommitCount = mongoose.model('ContributorCommitCount', contributorCommitCountSchema);
+
+module.exports = ContributorCommitCount;
