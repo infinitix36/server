@@ -66,5 +66,5 @@ async function saveContributorCommitCount(owner) {
   }
 }
 
-saveContributorCommitCount("dreamshack1999");
+// saveContributorCommitCount("dreamshack1999");
 module.exports = gitRoute;

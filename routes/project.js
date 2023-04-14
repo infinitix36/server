@@ -9,7 +9,7 @@ projectRoute.put('/projects/:projectId/description', async (req, res) => {
     const descriptionOptions = req.body;
 
     // Update the options for the "description" field using the findByIdAndUpdate() method
-    const updatedProject = await Project.findByIdAndUpdate(projectId, { description: descriptionOptions }, { new: true });
+    const updatedProject = await Project.findByIdAndUpdate(projectId, {  description: descriptionOptions.description }, { new: true });
 
     if (!updatedProject) {
       return res.status(404).json({ error: 'Project not found' });
