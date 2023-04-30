@@ -2,6 +2,55 @@ const express = require("express");
 const userRoute = express.Router();
 const User = require("../models/user.model");
 const fetch = require("node-fetch");
+const axios = require("axios");
+//git count
+async function updateUserCommitCount(username) {
+  try {
+    const response = await axios.get(
+      `https://api.github.com/users/${username}/repos`
+    );
+    const repos = response.data;
+
+    const commitCountByContributor = {};
+
+    for (const repo of repos) {
+      const response = await axios.get(
+        `https://api.github.com/repos/${username}/${repo.name}/commits`
+      );
+      const commits = response.data;
+
+      for (const commit of commits) {
+        const contributor = commit.author.login;
+
+        if (commitCountByContributor[contributor]) {
+          commitCountByContributor[contributor]++;
+        } else {
+          commitCountByContributor[contributor] = 1;
+        }
+      }
+    }
+
+    const contributors = Object.keys(commitCountByContributor);
+
+    for (const contributor of contributors) {
+      const user = await User.findOne({ GitHubUsername: contributor });
+
+      if (user) {
+        await User.updateOne(
+          { _id: user._id },
+          { $set: { commitCount: commitCountByContributor[contributor] } }
+        );
+      }
+    }
+
+    console.log(commitCountByContributor);
+    console.log("User commit counts updated");
+  } catch (error) {
+    console.error(error);
+  }
+}
+const username = "dreamshack1999";
+updateUserCommitCount(username);
 
 userRoute.route("/users/all").get(function (req, res) {
   const { userRoleName, sortBy, sortOrder } = req.query;
