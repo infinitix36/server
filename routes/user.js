@@ -50,7 +50,9 @@ async function updateUserCommitCount(username) {
   }
 }
 const username = "dreamshack1999";
-updateUserCommitCount(username);
+setInterval(() => {
+  updateUserCommitCount(username);
+}, 6 * 60 * 60 * 1000); // 6 hours in milliseconds
 
 userRoute.route("/users/all").get(function (req, res) {
   const { userRoleName, sortBy, sortOrder } = req.query;
