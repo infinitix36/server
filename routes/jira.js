@@ -60,7 +60,6 @@ async function fetchAndSaveIssuesHandler() {
 fetchAndSaveIssuesHandler();
 setInterval(fetchAndSaveIssuesHandler, interval);
 
-
 jiraRoute.route("/jira/:projectName").get(function (req, res) {
   const projectName = req.params.projectName;
   Issue.find({ projectName: projectName }, {}, (err, issues) => {
