@@ -50,9 +50,15 @@ async function updateUserCommitCount(username) {
   }
 }
 const username = "dreamshack1999";
+
+// Call the function initially
+updateUserCommitCount(username);
+
+// Schedule the function to be called every 6 hours
+const interval = 6 * 60 * 60 * 1000; // 6 hours in milliseconds
 setInterval(() => {
   updateUserCommitCount(username);
-}, 6 * 60 * 60 * 1000); // 6 hours in milliseconds
+}, interval);
 
 userRoute.route("/users/all").get(function (req, res) {
   const { userRoleName, sortBy, sortOrder } = req.query;
