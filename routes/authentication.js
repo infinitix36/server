@@ -36,6 +36,8 @@ authRoute.route("/authentication/register").post(function (req, res) {
   const userJiraLink = req.body.userJiraLink;
   const password = req.body.password;
   const confirmPassword = req.body.confirmPassword;
+  const commitCount = 0;
+  const rating = 0;
 
   // Hash the password using bcrypt
   bcrypt.hash(password, 10, function (err, hashedPassword) {
@@ -53,6 +55,8 @@ authRoute.route("/authentication/register").post(function (req, res) {
       GitHubUsername: GitHubUsername,
       userJiraLink: userJiraLink,
       password: hashedPassword,
+      commitCount: commitCount,
+      rating: rating,
 
       confirmPassword: confirmPassword,
     });
