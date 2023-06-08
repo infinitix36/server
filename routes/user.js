@@ -75,6 +75,7 @@ userRoute.route("/users/all").get(function (req, res) {
     rating: 1,
     GitHubUsername: 1,
     userRoleName: 1,
+    commitCount: 1,
   })
     .sort(sortCriteria)
     .exec((err, users) => {
@@ -87,6 +88,7 @@ userRoute.route("/users/all").get(function (req, res) {
           rating: parseInt(user.rating),
           userRoleName: user.userRoleName,
           GitHubUsername: user.GitHubUsername,
+          commitCount: user.commitCount,
         }));
         res.json(parsedUsers);
       }
