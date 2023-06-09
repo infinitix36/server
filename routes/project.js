@@ -52,6 +52,7 @@ projectRoute.put("/projects/:projectId/description", async (req, res) => {
   }
 });
 
+
 projectRoute
   .route("/projects/getProjectDetailsQA/:id")
   .get(function (req, res) {
@@ -68,6 +69,7 @@ projectRoute
       }
     );
   });
+
 
 // get feedbacks of which he is the techlead sent user id by params
 projectRoute.route("/projects/getFeedbacks/:userId").get(function (req, res) {
@@ -234,15 +236,19 @@ projectRoute.route("/projects/getProjectDetails").get(function (req, res) {
 
 //get project details which are fill by project manager but did not fill by techlead
 projectRoute
-  .route("/projects/getIncompleteProjectDetails")
+  .route("/projects/getIncompleteProjectDetails/:id")
   .get(function (req, res) {
-    Project.find({ completeStatus: false }, (err, projects) => {
-      if (err) {
-        res.send(err);
-      } else {
-        res.json(projects);
+    const id = req.params.id;
+    Project.find(
+      { $and: [{ techLead: `${id}` }, { completeStatus: false }] },
+      (err, projects) => {
+        if (err) {
+          res.send(err);
+        } else {
+          res.json(projects);
+        }
       }
-    });
+    );
   });
 
 //add basic project details by project manager
