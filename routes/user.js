@@ -277,7 +277,6 @@ userRoute.route("/users/getMembers").get(function (req, res) {
     }
   );
 });
-
 // get all contributors
 userRoute.route("/users/getContributors").get(function (req, res) {
   User.find(

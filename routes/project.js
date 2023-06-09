@@ -3,25 +3,28 @@ const projectRoute = express.Router();
 const Project = require("../models/project.model");
 
 // Define the route for updating the options for the "description" field
-projectRoute.put('/projects/:projectId/description', async (req, res) => {
+projectRoute.put("/projects/:projectId/description", async (req, res) => {
   try {
     const projectId = req.params.projectId;
     const descriptionOptions = req.body;
 
     // Update the options for the "description" field using the findByIdAndUpdate() method
-    const updatedProject = await Project.findByIdAndUpdate(projectId, {  description: descriptionOptions.description }, { new: true });
+    const updatedProject = await Project.findByIdAndUpdate(
+      projectId,
+      { description: descriptionOptions.description },
+      { new: true }
+    );
 
     if (!updatedProject) {
-      return res.status(404).json({ error: 'Project not found' });
+      return res.status(404).json({ error: "Project not found" });
     }
 
     res.json(updatedProject);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Internal server error' });
+    res.status(500).json({ error: "Internal server error" });
   }
 });
-
 
 // get feedbacks of which he is the techlead sent user id by params
 projectRoute.route("/projects/getFeedbacks/:userId").get(function (req, res) {
@@ -63,7 +66,6 @@ projectRoute
     });
   });
 
-
 // get all feedback comment by QA
 projectRoute
   .route("/projects/getFeedbackQA/:projectId")
@@ -78,7 +80,7 @@ projectRoute
     });
   });
 
-  //add feedback comment by QA
+//add feedback comment by QA
 
 projectRoute.route("/project/addFeedQA").post(function (req, res) {
   const projectId = req.body.projectId;
@@ -150,7 +152,6 @@ projectRoute.route("/project/addFeed").post(function (req, res) {
   );
 });
 
-
 // only get project details of specific tech lead
 
 projectRoute
@@ -166,8 +167,7 @@ projectRoute
     });
   });
 
-
-  // get project details by if he is a contibutor of project
+// get project details by if he is a contibutor of project
 
 projectRoute.route("/projects/getProjectDetails/:id").get(function (req, res) {
   const id = req.params.id;
@@ -180,7 +180,7 @@ projectRoute.route("/projects/getProjectDetails/:id").get(function (req, res) {
   });
 });
 
-// get project details 
+// get project details
 projectRoute.route("/projects/getProjectDetails").get(function (req, res) {
   Project.find({}, (err, projects) => {
     if (err) {
@@ -193,18 +193,22 @@ projectRoute.route("/projects/getProjectDetails").get(function (req, res) {
 
 //get project details which are fill by project manager but did not fill by techlead
 projectRoute
-  .route("/projects/getIncompleteProjectDetails")
+  .route("/projects/getIncompleteProjectDetails/:id")
   .get(function (req, res) {
-    Project.find({ completeStatus: false }, (err, projects) => {
-      if (err) {
-        res.send(err);
-      } else {
-        res.json(projects);
+    const id = req.params.id;
+    Project.find(
+      { $and: [{ techLead: `${id}` }, { completeStatus: false }] },
+      (err, projects) => {
+        if (err) {
+          res.send(err);
+        } else {
+          res.json(projects);
+        }
       }
-    });
+    );
   });
 
-  //add basic project details by project manager
+//add basic project details by project manager
 projectRoute.route("/projects/addBasicProjDetails").post(function (req, res) {
   try {
     // variable should be in the name as in the model
