@@ -88,11 +88,15 @@ authRoute.route("/authentication/login").post(function (req, res) {
     if (err) {
       return res
         .status(500)
-        .send({ error: "Error while retrieving user from database" });
+        .send({ message: "Error while retrieving user from database" });
     }
 
     if (!user) {
-      return res.status(404).send({ error: "User not found" });
+      return res.status(404).send({ message: "User not found" });
+    }
+
+    if (!user.approveStatus) {
+      return res.status(401).send({ message: "User not approved" });
     }
 
     bcrypt.compare(password, user.password, function (err, result) {
