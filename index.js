@@ -45,11 +45,13 @@ app.get("/sendmail", async (req, res) => {
   }
 });
 
-app.get("/sendmailTo/:email", async (req, res) => {
+app.get("/sendmailTo/:email/:message", async (req, res) => {
+  mes = req.params.message;
   const mailOptions = {
+    
     to: req.params.email,
     subject: "Subject about verify",
-    html: "This is Test Mail !",
+    html: `This is ${mes} !`,
   };
   const success = await sendMail(mailOptions);
   if (success) {

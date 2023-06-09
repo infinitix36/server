@@ -4,61 +4,61 @@ const User = require("../models/user.model");
 const fetch = require("node-fetch");
 const axios = require("axios");
 //git count
-async function updateUserCommitCount(username) {
-  try {
-    const response = await axios.get(
-      `https://api.github.com/users/${username}/repos`
-    );
-    const repos = response.data;
+// async function updateUserCommitCount(username) {
+//   try {
+//     const response = await axios.get(
+//       `https://api.github.com/users/${username}/repos`
+//     );
+//     const repos = response.data;
 
-    const commitCountByContributor = {};
+//     const commitCountByContributor = {};
 
-    for (const repo of repos) {
-      const response = await axios.get(
-        `https://api.github.com/repos/${username}/${repo.name}/commits`
-      );
-      const commits = response.data;
+//     for (const repo of repos) {
+//       const response = await axios.get(
+//         `https://api.github.com/repos/${username}/${repo.name}/commits`
+//       );
+//       const commits = response.data;
 
-      for (const commit of commits) {
-        const contributor = commit.author.login;
+//       for (const commit of commits) {
+//         const contributor = commit.author.login;
 
-        if (commitCountByContributor[contributor]) {
-          commitCountByContributor[contributor]++;
-        } else {
-          commitCountByContributor[contributor] = 1;
-        }
-      }
-    }
+//         if (commitCountByContributor[contributor]) {
+//           commitCountByContributor[contributor]++;
+//         } else {
+//           commitCountByContributor[contributor] = 1;
+//         }
+//       }
+//     }
 
-    const contributors = Object.keys(commitCountByContributor);
+//     const contributors = Object.keys(commitCountByContributor);
 
-    for (const contributor of contributors) {
-      const user = await User.findOne({ GitHubUsername: contributor });
+//     for (const contributor of contributors) {
+//       const user = await User.findOne({ GitHubUsername: contributor });
 
-      if (user) {
-        await User.updateOne(
-          { _id: user._id },
-          { $set: { commitCount: commitCountByContributor[contributor] } }
-        );
-      }
-    }
+//       if (user) {
+//         await User.updateOne(
+//           { _id: user._id },
+//           { $set: { commitCount: commitCountByContributor[contributor] } }
+//         );
+//       }
+//     }
 
-    console.log(commitCountByContributor);
-    console.log("User commit counts updated");
-  } catch (error) {
-    console.error(error);
-  }
-}
-const username = "dreamshack1999";
+//     console.log(commitCountByContributor);
+//     console.log("User commit counts updated");
+//   } catch (error) {
+//     console.error(error);
+//   }
+// }
+// const username = "dreamshack1999";
 
-// Call the function initially
-updateUserCommitCount(username);
+// // Call the function initially
+// updateUserCommitCount(username);
 
-// Schedule the function to be called every 6 hours
-const interval = 6 * 60 * 60 * 1000; // 6 hours in milliseconds
-setInterval(() => {
-  updateUserCommitCount(username);
-}, interval);
+// // Schedule the function to be called every 6 hours
+// const interval = 6 * 60 * 60 * 1000; // 6 hours in milliseconds
+// setInterval(() => {
+//   updateUserCommitCount(username);
+// }, interval);
 
 userRoute.route("/users/all").get(function (req, res) {
   const { userRoleName, sortBy, sortOrder } = req.query;
