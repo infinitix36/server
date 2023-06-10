@@ -15,7 +15,7 @@ require("dotenv").config();
 // if we want to test with postman x-www-form-urlencoded
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
-const Notification = require('./models/notification.model');
+const Notification = require("./models/notification.model");
 // when deployment uncomment this
 // app.use(
 //   cors({
@@ -55,7 +55,6 @@ app.get("/sendmail", async (req, res) => {
 app.get("/sendmailTo/:email/:message", async (req, res) => {
   mes = req.params.message;
   const mailOptions = {
-    
     to: req.params.email,
     subject: "Subject about verify",
     html: `This is ${mes} !`,
@@ -70,7 +69,7 @@ app.get("/sendmailTo/:email/:message", async (req, res) => {
 
 mongoose.set("strictQuery", false);
 mongoose
-  .connect("mongodb://localhost:27017/app", {
+  .connect("mongodb://127.0.0.1:27017/app1", {
     useUnifiedTopology: true,
     useNewUrlParser: true,
     autoIndex: true,
@@ -89,7 +88,6 @@ const adminNotificationRouter = require("./routes/adminNotification");
 const router = require("./routes/adminNotification");
 const adminRouter = require("./routes/adminNotification");
 
-
 // Use the user and admin notification routers
 app.use("/api/user", userNotificationRouter);
 app.use("/api/admin", adminNotificationRouter);
@@ -104,19 +102,19 @@ io.on("connection", (socket) => {
   });
 });
 
-app.post('/notifications', async (req, res) => {
+app.post("/notifications", async (req, res) => {
   try {
     const { message } = req.body;
-    
+
     // Save the notification to the database
     const notification = await Notification.create({ message });
 
     // Emit the notification to all connected clients
-    io.emit('notification', notification);
+    io.emit("notification", notification);
 
     res.status(201).json(notification);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Server Error' });
+    res.status(500).json({ message: "Server Error" });
   }
 });

@@ -46,21 +46,21 @@ async function fetchAndSaveIssues() {
   }
 }
 
-const hours = 6;
-const interval = hours * 60 * 60 * 1000; // convert hours to milliseconds
+// const hours = 6;
+// const interval = hours * 60 * 60 * 1000; // convert hours to milliseconds
 
-async function fetchAndSaveIssuesHandler() {
-  try {
-    const result = await fetchAndSaveIssues();
-    console.log(result);
-  } catch (error) {
-    console.error(error);
-  }
-}
+// async function fetchAndSaveIssuesHandler() {
+//   try {
+//     const result = await fetchAndSaveIssues();
+//     console.log(result);
+//   } catch (error) {
+//     console.error(error);
+//   }
+// }
 
 // Call fetchAndSaveIssuesHandler() immediately and then every 6 hours
-fetchAndSaveIssuesHandler();
-setInterval(fetchAndSaveIssuesHandler, interval);
+// fetchAndSaveIssuesHandler();
+// setInterval(fetchAndSaveIssuesHandler, interval);
 
 jiraRoute.route("/jira/:projectName").get(function (req, res) {
   const projectName = req.params.projectName;
