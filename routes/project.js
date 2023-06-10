@@ -1,7 +1,7 @@
 const express = require("express");
 const projectRoute = express.Router();
 const Project = require("../models/project.model");
-const User = require("../models/user.model");
+
 // Define the route for updating the options for the "description" field
 projectRoute.put("/projects/:projectId/description", async (req, res) => {
   try {
@@ -9,11 +9,7 @@ projectRoute.put("/projects/:projectId/description", async (req, res) => {
     const descriptionOptions = req.body;
 
     // Update the options for the "description" field using the findByIdAndUpdate() method
-    const updatedProject = await Project.findByIdAndUpdate(
-      projectId,
-      { description: descriptionOptions },
-      { new: true }
-    );
+    const updatedProject = await Project.findByIdAndUpdate(projectId, { description: descriptionOptions }, { new: true });
 
     if (!updatedProject) {
       return res.status(404).json({ error: "Project not found" });
@@ -25,6 +21,7 @@ projectRoute.put("/projects/:projectId/description", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
+
 
 // get feedbacks of which he is the techlead sent user id by params
 projectRoute.route("/projects/getFeedbacks/:userId").get(function (req, res) {
@@ -86,14 +83,12 @@ projectRoute.route("/project/addFeedQA").post(function (req, res) {
   const projectId = req.body.projectId;
   const feedBacks = req.body.feedback;
   const feedBy = req.body.feedBy;
-  const feedbyName = req.body.feedbyName;
 
   const newFeedBack = {
     feedId: Date.now(),
     feedback: feedBacks,
     createdDate: Date.now(),
     feedBy: feedBy,
-    feedbyName: feedbyName,
   };
 
   Project.findOneAndUpdate(
@@ -193,15 +188,19 @@ projectRoute.route("/projects/getProjectDetails").get(function (req, res) {
 
 //get project details which are fill by project manager but did not fill by techlead
 projectRoute
-  .route("/projects/getIncompleteProjectDetails")
+  .route("/projects/getIncompleteProjectDetails/:id")
   .get(function (req, res) {
-    Project.find({ completeStatus: false }, (err, projects) => {
-      if (err) {
-        res.send(err);
-      } else {
-        res.json(projects);
+    const id = req.params.id;
+    Project.find(
+      { $and: [{ techLead: `${id}` }, { completeStatus: false }] },
+      (err, projects) => {
+        if (err) {
+          res.send(err);
+        } else {
+          res.json(projects);
+        }
       }
-    });
+    );
   });
 
 //add basic project details by project manager

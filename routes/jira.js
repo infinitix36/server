@@ -4,7 +4,7 @@ const Issue = require("../models/jira.model");
 const axios = require("axios");
 
 // Route to fetch and save issues
-jiraRoute.get("/issues", async (req, res) => {
+async function fetchAndSaveIssues() {
   try {
     // Fetch issues from Jira
     const jiraDomain = "dreamshack.atlassian.net";
@@ -28,6 +28,7 @@ jiraRoute.get("/issues", async (req, res) => {
           id: issueId,
           summary: issue.fields.summary,
           description: issue.fields.description,
+          link: `https://${jiraDomain}/browse/${issue.key}`, // Add the Jira issue link property
           projectName: issue.fields.project.name,
           createdBy: issue.fields.creator.displayName,
           createdTime: issue.fields.created,
@@ -38,13 +39,28 @@ jiraRoute.get("/issues", async (req, res) => {
       }
     }
 
-    res.send(`Saved ${newIssuesSaved} new issues to MongoDB`);
+    return `Saved ${newIssuesSaved} new issues to MongoDB`;
   } catch (error) {
     console.log(error);
-    res.status(500).send("Error fetching and saving issues");
+    throw new Error("Error fetching and saving issues");
   }
-});
+}
 
+const hours = 6;
+const interval = hours * 60 * 60 * 1000; // convert hours to milliseconds
+
+async function fetchAndSaveIssuesHandler() {
+  try {
+    const result = await fetchAndSaveIssues();
+    console.log(result);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+// Call fetchAndSaveIssuesHandler() immediately and then every 6 hours
+fetchAndSaveIssuesHandler();
+setInterval(fetchAndSaveIssuesHandler, interval);
 
 jiraRoute.route("/jira/:projectName").get(function (req, res) {
   const projectName = req.params.projectName;

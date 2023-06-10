@@ -63,7 +63,6 @@
 
 // module.exports = userRoutes;
 
-
 const express = require("express");
 const userRoutes = express.Router();
 const UserData = require("../models/user.model");
@@ -83,7 +82,10 @@ userRoutes.route("/users/showAllUsers").get(function (req, res) {
 });
 
 userRoutes.route("/users/getAllUnverifiedUsers").get(function (req, res) {
-  UserData.find({ userStatus: false, "userRoleName.userRoleValue": "Hired Employee" })
+  UserData.find({
+    userStatus: false,
+    "userRoleName.userRoleValue": "Hired Employee",
+  })
     .populate({ path: "userRoleName", select: "userRoleValue" })
     .exec((err, users) => {
       if (err) {
