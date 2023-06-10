@@ -28,6 +28,7 @@ async function fetchAndSaveIssues() {
           id: issueId,
           summary: issue.fields.summary,
           description: issue.fields.description,
+          link: `https://${jiraDomain}/browse/${issue.key}`, // Add the Jira issue link property
           projectName: issue.fields.project.name,
           createdBy: issue.fields.creator.displayName,
           createdTime: issue.fields.created,
@@ -44,6 +45,7 @@ async function fetchAndSaveIssues() {
     throw new Error("Error fetching and saving issues");
   }
 }
+
 const hours = 6;
 const interval = hours * 60 * 60 * 1000; // convert hours to milliseconds
 

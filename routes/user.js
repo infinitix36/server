@@ -4,61 +4,132 @@ const User = require("../models/user.model");
 const fetch = require("node-fetch");
 const axios = require("axios");
 //git count
-async function updateUserCommitCount(username) {
-  try {
-    const response = await axios.get(
-      `https://api.github.com/users/${username}/repos`
-    );
-    const repos = response.data;
+// async function updateUserCommitCount(username) {
+//   try {
+//     const response = await axios.get(
+//       `https://api.github.com/users/${username}/repos`
+//     );
+//     const repos = response.data;
 
-    const commitCountByContributor = {};
+//     const commitCountByContributor = {};
 
-    for (const repo of repos) {
-      const response = await axios.get(
-        `https://api.github.com/repos/${username}/${repo.name}/commits`
-      );
-      const commits = response.data;
+//     for (const repo of repos) {
+//       const response = await axios.get(
+//         `https://api.github.com/repos/${username}/${repo.name}/commits`
+//       );
+//       const commits = response.data;
 
-      for (const commit of commits) {
-        const contributor = commit.author.login;
+//       for (const commit of commits) {
+//         const contributor = commit.author.login;
 
-        if (commitCountByContributor[contributor]) {
-          commitCountByContributor[contributor]++;
-        } else {
-          commitCountByContributor[contributor] = 1;
-        }
+//         if (commitCountByContributor[contributor]) {
+//           commitCountByContributor[contributor]++;
+//         } else {
+//           commitCountByContributor[contributor] = 1;
+//         }
+//       }
+//     }
+
+//     const contributors = Object.keys(commitCountByContributor);
+
+//     for (const contributor of contributors) {
+//       const user = await User.findOne({ GitHubUsername: contributor });
+
+//       if (user) {
+//         await User.updateOne(
+//           { _id: user._id },
+//           { $set: { commitCount: commitCountByContributor[contributor] } }
+//         );
+//       }
+//     }
+
+//     console.log(commitCountByContributor);
+//     console.log("User commit counts updated");
+//   } catch (error) {
+//     console.error(error);
+//   }
+// }
+// const username = "dreamshack1999";
+
+// // Call the function initially
+// updateUserCommitCount(username);
+
+// // Schedule the function to be called every 6 hours
+// const interval = 6 * 60 * 60 * 1000; // 6 hours in milliseconds
+// setInterval(() => {
+//   updateUserCommitCount(username);
+// }, interval);
+
+userRoute.route("/users/getUserNotifications/:userID").get(function (req, res) {
+  const userID = req.params.userID;
+  User.find({ _id: userID }, { notification: 1 }, (err, users) => {
+    if (err) {
+      res.send(err);
+    } else {
+      res.json(users);
+    }
+  });
+});
+// userRoute.route("/users/getUserNotificationsAll").get(function (req, res) {
+//   User.find( { notification: 1 }, (err, users) => {
+//     if (err) {
+//       res.send(err);
+//     } else {
+//       res.json(users);
+//     }
+//   });
+// });
+
+userRoute.route("/users/updateNotificationStatus").post(function (req, res) {
+  const nid = req.body.nid;
+  const uid = req.body.userID;
+
+  User.findById(uid, (err, user) => {
+    if (err) {
+      res.status(500).json({ status: false, message: "Server Error" });
+    } else {
+      const notification = user.notification.find((notif) => notif._id.equals(nid));
+      if (notification) {
+        notification.status = true;
+        user.save((err) => {
+          if (err) {
+            res.status(500).json({ status: false, message: "Server Error" });
+          } else {
+            res.json({ status: true, message: "Seen" });
+          }
+        });
+      } else {
+        res.status(404).json({ status: false, message: "Notification not found" });
       }
     }
+  });
+});
 
-    const contributors = Object.keys(commitCountByContributor);
 
-    for (const contributor of contributors) {
-      const user = await User.findOne({ GitHubUsername: contributor });
 
-      if (user) {
-        await User.updateOne(
-          { _id: user._id },
-          { $set: { commitCount: commitCountByContributor[contributor] } }
-        );
-      }
-    }
 
-    console.log(commitCountByContributor);
-    console.log("User commit counts updated");
-  } catch (error) {
-    console.error(error);
-  }
-}
-const username = "dreamshack1999";
-
-// Call the function initially
-updateUserCommitCount(username);
-
-// Schedule the function to be called every 6 hours
-const interval = 6 * 60 * 60 * 1000; // 6 hours in milliseconds
-setInterval(() => {
-  updateUserCommitCount(username);
-}, interval);
+// userRoute.route("/users/updateNotificationStatus").post(function (req, res) {
+//   const nid = req.body.nid;
+//   const uid = req.body.userID;
+//   // console.log("Hello" + nid);
+//   User.find({ _id: uid }, (err, users) => {
+//     if (err) {
+//       res.send(err);
+//     } else {
+//       const notification = users[0].notification.find((notif) =>
+//         notif._id.equals(nid)
+//       );
+//       notification.status = true;
+//       users.save((err) => {
+//         if (err) {
+//           res.json({ status: false, message: "failed" });
+//         }else{
+//           res.json({status:true, message:"Seen"})
+//         }
+//       });
+//     }
+//   });
+// });
 
 userRoute.route("/users/all").get(function (req, res) {
   const { userRoleName, sortBy, sortOrder } = req.query;
@@ -75,6 +146,7 @@ userRoute.route("/users/all").get(function (req, res) {
     rating: 1,
     GitHubUsername: 1,
     userRoleName: 1,
+    commitCount: 1,
   })
     .sort(sortCriteria)
     .exec((err, users) => {
@@ -87,6 +159,7 @@ userRoute.route("/users/all").get(function (req, res) {
           rating: parseInt(user.rating),
           userRoleName: user.userRoleName,
           GitHubUsername: user.GitHubUsername,
+          commitCount: user.commitCount,
         }));
         res.json(parsedUsers);
       }
@@ -261,6 +334,17 @@ userRoute.route("/users/getTechLead").get(function (req, res) {
   );
 });
 
+// get members Profile
+userRoute.route("/users/getMembersProfile/:id").get(function (req, res) {
+
+  User.find({ _id: req.params.id }, {}, (err, users) => {
+    if (err) {
+      res.send(err);
+    } else {
+      res.json(users);
+    }
+  });
+});
 // get members
 userRoute.route("/users/getMembers").get(function (req, res) {
   User.find(
@@ -275,7 +359,6 @@ userRoute.route("/users/getMembers").get(function (req, res) {
     }
   );
 });
-
 // get all contributors
 userRoute.route("/users/getContributors").get(function (req, res) {
   User.find(

@@ -114,6 +114,9 @@ authRoute.route("/authentication/register").post(function (req, res) {
   const GitHubUsername = req.body.GitHubUsername;
   const userJiraLink = req.body.userJiraLink;
   const password = req.body.password;
+  const confirmPassword = req.body.confirmPassword;
+  const commitCount = 0;
+  const rating = 0;
 
   // Hash the password using bcrypt
   bcrypt.hash(password, 10, function (err, hashedPassword) {
@@ -131,6 +134,10 @@ authRoute.route("/authentication/register").post(function (req, res) {
       GitHubUsername: GitHubUsername,
       userJiraLink: userJiraLink,
       password: hashedPassword,
+      commitCount: commitCount,
+      rating: rating,
+
+      confirmPassword: confirmPassword,
     });
 
     // Attempt to save the user's data to the database
@@ -160,11 +167,15 @@ authRoute.route("/authentication/login").post(function (req, res) {
     if (err) {
       return res
         .status(500)
-        .send({ error: "Error while retrieving user from database" });
+        .send({ message: "Error while retrieving user from database" });
     }
 
     if (!user) {
-      return res.status(404).send({ error: "User not found" });
+      return res.status(404).send({ message: "User not found" });
+    }
+
+    if (!user.approveStatus) {
+      return res.status(401).send({ message: "User not approved" });
     }
 
     bcrypt.compare(password, user.password, function (err, result) {

@@ -3,22 +3,22 @@ const projectRoute = express.Router();
 const Project = require("../models/project.model");
 
 // Define the route for updating the options for the "description" field
-projectRoute.put('/projects/:projectId/description', async (req, res) => {
+projectRoute.put("/projects/:projectId/description", async (req, res) => {
   try {
     const projectId = req.params.projectId;
     const descriptionOptions = req.body;
 
     // Update the options for the "description" field using the findByIdAndUpdate() method
-    const updatedProject = await Project.findByIdAndUpdate(projectId, {  description: descriptionOptions.description }, { new: true });
+    const updatedProject = await Project.findByIdAndUpdate(projectId, { description: descriptionOptions }, { new: true });
 
     if (!updatedProject) {
-      return res.status(404).json({ error: 'Project not found' });
+      return res.status(404).json({ error: "Project not found" });
     }
 
     res.json(updatedProject);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Internal server error' });
+    res.status(500).json({ error: "Internal server error" });
   }
 });
 
@@ -63,7 +63,6 @@ projectRoute
     });
   });
 
-
 // get all feedback comment by QA
 projectRoute
   .route("/projects/getFeedbackQA/:projectId")
@@ -78,20 +77,18 @@ projectRoute
     });
   });
 
-  //add feedback comment by QA
+//add feedback comment by QA
 
 projectRoute.route("/project/addFeedQA").post(function (req, res) {
   const projectId = req.body.projectId;
   const feedBacks = req.body.feedback;
   const feedBy = req.body.feedBy;
-  const feedbyName = req.body.feedbyName;
 
   const newFeedBack = {
     feedId: Date.now(),
     feedback: feedBacks,
     createdDate: Date.now(),
     feedBy: feedBy,
-    feedbyName: feedbyName,
   };
 
   Project.findOneAndUpdate(
@@ -150,7 +147,6 @@ projectRoute.route("/project/addFeed").post(function (req, res) {
   );
 });
 
-
 // only get project details of specific tech lead
 
 projectRoute
@@ -166,8 +162,7 @@ projectRoute
     });
   });
 
-
-  // get project details by if he is a contibutor of project
+// get project details by if he is a contibutor of project
 
 projectRoute.route("/projects/getProjectDetails/:id").get(function (req, res) {
   const id = req.params.id;
@@ -180,7 +175,7 @@ projectRoute.route("/projects/getProjectDetails/:id").get(function (req, res) {
   });
 });
 
-// get project details 
+// get project details
 projectRoute.route("/projects/getProjectDetails").get(function (req, res) {
   Project.find({}, (err, projects) => {
     if (err) {
@@ -193,18 +188,22 @@ projectRoute.route("/projects/getProjectDetails").get(function (req, res) {
 
 //get project details which are fill by project manager but did not fill by techlead
 projectRoute
-  .route("/projects/getIncompleteProjectDetails")
+  .route("/projects/getIncompleteProjectDetails/:id")
   .get(function (req, res) {
-    Project.find({ completeStatus: false }, (err, projects) => {
-      if (err) {
-        res.send(err);
-      } else {
-        res.json(projects);
+    const id = req.params.id;
+    Project.find(
+      { $and: [{ techLead: `${id}` }, { completeStatus: false }] },
+      (err, projects) => {
+        if (err) {
+          res.send(err);
+        } else {
+          res.json(projects);
+        }
       }
-    });
+    );
   });
 
-  //add basic project details by project manager
+//add basic project details by project manager
 projectRoute.route("/projects/addBasicProjDetails").post(function (req, res) {
   try {
     // variable should be in the name as in the model
@@ -231,12 +230,18 @@ projectRoute.route("/projects/addBasicProjDetails").post(function (req, res) {
     // we are saving the data to the database
     project
       .save()
-      .then((item) =>
+      .then((item) => {
+        const newNotification = {
+          message: `${projectName} project is Assigned for you`,
+        }
+        User.updateOne({_id:techLead},{$push:{notification:newNotification}},(err, users)=>{
+          console.log("User table Updated successfully")
+        })
         res.json({
           message: "Project added successfully",
           status: true,
-        })
-      )
+        });
+      })
       .catch((err) => {
         // error code 11000 is for duplicate data in mongo db
         if (err.code === 11000) {

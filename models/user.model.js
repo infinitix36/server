@@ -19,7 +19,16 @@ const User = new mongoose.Schema(
     submittedOn: {type: Date, default: new Date()},
     taken: {type:String},
     commitCount:{type:Number},
-    forgotPasswordLink:{type: String}
+    forgotPasswordLink:{type: String},
+    
+
+    notification: [
+      {
+        message:{type: String},
+        timeDate: {type: Date, default: Date.now()},
+        status: {type: Boolean, default: false}
+      }
+    ]
 
   },
   {
