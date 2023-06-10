@@ -263,6 +263,17 @@ userRoute.route("/users/getTechLead").get(function (req, res) {
   );
 });
 
+// get members Profile
+userRoute.route("/users/getMembersProfile/:id").get(function (req, res) {
+
+  User.find({ _id: req.params.id }, {}, (err, users) => {
+    if (err) {
+      res.send(err);
+    } else {
+      res.json(users);
+    }
+  });
+});
 // get members
 userRoute.route("/users/getMembers").get(function (req, res) {
   User.find(
