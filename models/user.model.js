@@ -18,7 +18,8 @@ const User = new mongoose.Schema(
     approveStatus:{type: Boolean, default: false},
     submittedOn: {type: Date, default: new Date()},
     taken: {type:String},
-    commitCount:{type:Number} 
+    commitCount:{type:Number},
+    forgotPasswordLink:{type: String}
 
   },
   {
