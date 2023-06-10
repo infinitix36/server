@@ -17,7 +17,14 @@ const User = new mongoose.Schema(
     rating: { type: String},
     approveStatus:{type: Boolean, default: false},
     submittedOn: {type: Date, default: new Date()},
-    taken: {type:String}
+    taken: {type:String},
+    notification: [
+      {
+        message:{type: String},
+        timeDate: {type: Date, default: Date.now()},
+        status: {type: Boolean, default: false}
+      }
+    ]
 
   },
   {
