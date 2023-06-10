@@ -60,6 +60,77 @@ const axios = require("axios");
 //   updateUserCommitCount(username);
 // }, interval);
 
+userRoute.route("/users/getUserNotifications/:userID").get(function (req, res) {
+  const userID = req.params.userID;
+  User.find({ _id: userID }, { notification: 1 }, (err, users) => {
+    if (err) {
+      res.send(err);
+    } else {
+      res.json(users);
+    }
+  });
+});
+// userRoute.route("/users/getUserNotificationsAll").get(function (req, res) {
+//   User.find( { notification: 1 }, (err, users) => {
+//     if (err) {
+//       res.send(err);
+//     } else {
+//       res.json(users);
+//     }
+//   });
+// });
+
+userRoute.route("/users/updateNotificationStatus").post(function (req, res) {
+  const nid = req.body.nid;
+  const uid = req.body.userID;
+
+  User.findById(uid, (err, user) => {
+    if (err) {
+      res.status(500).json({ status: false, message: "Server Error" });
+    } else {
+      const notification = user.notification.find((notif) => notif._id.equals(nid));
+      if (notification) {
+        notification.status = true;
+        user.save((err) => {
+          if (err) {
+            res.status(500).json({ status: false, message: "Server Error" });
+          } else {
+            res.json({ status: true, message: "Seen" });
+          }
+        });
+      } else {
+        res.status(404).json({ status: false, message: "Notification not found" });
+      }
+    }
+  });
+});
+
+
+
+
+// userRoute.route("/users/updateNotificationStatus").post(function (req, res) {
+//   const nid = req.body.nid;
+//   const uid = req.body.userID;
+//   // console.log("Hello" + nid);
+//   User.find({ _id: uid }, (err, users) => {
+//     if (err) {
+//       res.send(err);
+//     } else {
+//       const notification = users[0].notification.find((notif) =>
+//         notif._id.equals(nid)
+//       );
+//       notification.status = true;
+//       users.save((err) => {
+//         if (err) {
+//           res.json({ status: false, message: "failed" });
+//         }else{
+//           res.json({status:true, message:"Seen"})
+//         }
+//       });
+//     }
+//   });
+// });
+
 userRoute.route("/users/all").get(function (req, res) {
   const { userRoleName, sortBy, sortOrder } = req.query;
   const query = userRoleName ? { userRoleName } : {};

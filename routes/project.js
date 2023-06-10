@@ -1,32 +1,6 @@
 const express = require("express");
 const projectRoute = express.Router();
 const Project = require("../models/project.model");
-// add stage for the project
-projectRoute.route("/project/addStage").post(function (req, res) {
-  const projectId = req.body.projectId;
-  const stage = req.body.stage;
-  Project.updateOne(
-    { _id: projectId },
-    {
-      $set: {
-        stage: stage,
-      },
-    }
-  )
-    .then((result) => {
-      return res.json({
-        message: "Stage Updated",
-        status: true,
-      });
-    })
-    .catch((err) => {
-      console.log(err);
-      return res.json({
-        message: "Error",
-        status: false,
-      });
-    });
-});
 
 // Define the route for updating the options for the "description" field
 projectRoute.put("/projects/:projectId/description", async (req, res) => {
@@ -35,11 +9,7 @@ projectRoute.put("/projects/:projectId/description", async (req, res) => {
     const descriptionOptions = req.body;
 
     // Update the options for the "description" field using the findByIdAndUpdate() method
-    const updatedProject = await Project.findByIdAndUpdate(
-      projectId,
-      { description: descriptionOptions.description },
-      { new: true }
-    );
+    const updatedProject = await Project.findByIdAndUpdate(projectId, { description: descriptionOptions }, { new: true });
 
     if (!updatedProject) {
       return res.status(404).json({ error: "Project not found" });
@@ -51,24 +21,6 @@ projectRoute.put("/projects/:projectId/description", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-
-
-projectRoute
-  .route("/projects/getProjectDetailsQA/:id")
-  .get(function (req, res) {
-    const id = req.params.id;
-    Project.find(
-      { "contributors.value": `${id}` },
-      { projectName: 1, description: 1, stage: 1 },
-      (err, projects) => {
-        if (err) {
-          res.send(err);
-        } else {
-          res.json(projects);
-        }
-      }
-    );
-  });
 
 
 // get feedbacks of which he is the techlead sent user id by params
@@ -278,12 +230,18 @@ projectRoute.route("/projects/addBasicProjDetails").post(function (req, res) {
     // we are saving the data to the database
     project
       .save()
-      .then((item) =>
+      .then((item) => {
+        const newNotification = {
+          message: `${projectName} project is Assigned for you`,
+        }
+        User.updateOne({_id:techLead},{$push:{notification:newNotification}},(err, users)=>{
+          console.log("User table Updated successfully")
+        })
         res.json({
           message: "Project added successfully",
           status: true,
-        })
-      )
+        });
+      })
       .catch((err) => {
         // error code 11000 is for duplicate data in mongo db
         if (err.code === 11000) {
