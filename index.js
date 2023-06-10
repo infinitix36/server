@@ -69,7 +69,7 @@ app.get("/sendmailTo/:email/:message", async (req, res) => {
 
 mongoose.set("strictQuery", false);
 mongoose
-  .connect("mongodb://127.0.0.1:27017/app1", {
+  .connect(process.env.DATABASE_URL, {
     useUnifiedTopology: true,
     useNewUrlParser: true,
     autoIndex: true,
