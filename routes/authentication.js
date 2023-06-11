@@ -141,7 +141,6 @@ authRoute.route("/authentication/register").post(function (req, res) {
     if (err) {
       return res.status(500).send({ error: "Error hashing password" });
     }
-
     const user = new User({
       userRoleName: userRoleName,
       fname: fname,
