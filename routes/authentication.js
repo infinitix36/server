@@ -50,26 +50,29 @@ authRoute
     });
   });
 
-  authRoute
+authRoute
   .route("/authentication/resetPassword")
   .post(async function (req, res) {
     const email = req.body.email;
     const string = req.body.string;
     const newPassword = req.body.newPassword;
-    console.log(email)
-    console.log(string)
-    console.log(newPassword)
+    console.log(email);
+    console.log(string);
+    console.log(newPassword);
     User.findOne({ email: email }, function (err, user) {
       if (string == user.forgotPasswordLink) {
-        bcrypt.hash(newPassword, 10, function (err, hashedPassword){
+        bcrypt.hash(newPassword, 10, function (err, hashedPassword) {
           user.password = hashedPassword;
           user.forgotPasswordLink = "";
           user.save(async (err) => {
             if (err) {
-              return res.json({ status:true, message: "Reset Password Failed" });
+              return res.json({
+                status: true,
+                message: "Reset Password Failed",
+              });
             } else {
               return res.json({
-                status:false,
+                status: false,
                 message: "Password Reset Successfully",
               });
             }
@@ -77,13 +80,12 @@ authRoute
         });
       } else {
         return res.json({
-          status:false,
+          status: false,
           message: "Invalid Link",
         });
       }
     });
   });
-
 
 authRoute.route("/authentication/verifyToken").post(async (req, res) => {
   const token = req.body.token;
@@ -157,6 +159,13 @@ authRoute.route("/authentication/register").post(function (req, res) {
         res.status(500).send({ error: "Error saving data to the database" });
       });
   });
+  const URL = "http://localhost:3000/pending";
+  const mailOptions = {
+    to: "dreamshack1999@gmail.com",
+    subject: "Verify User",
+    html: `New user is there check that IN URL : ${URL}`,
+  };
+  sendMail(mailOptions);
 });
 
 authRoute.route("/authentication/login").post(function (req, res) {
