@@ -70,6 +70,21 @@ userRoute.route("/users/getUserNotifications/:userID").get(function (req, res) {
     }
   });
 });
+
+userRoute.route("/users/updateUserProfile").post(function (req, res) {
+  const userID = req.body.userID;
+  const updateObject = {
+    GitHubUsername: req.body.newGithub,
+    userJiraLink: req.body.newJira,
+    orangeHrLink: req.body.newOrange,
+    phone: req.body.newPhone
+  }
+  User.findOneAndUpdate({_id: userID},{$set:updateObject},(err, userData)=>{
+    console.log(userData)
+    res.json({message:"Successfully updated"})
+  })
+});
+
 // userRoute.route("/users/getUserNotificationsAll").get(function (req, res) {
 //   User.find( { notification: 1 }, (err, users) => {
 //     if (err) {
@@ -88,7 +103,9 @@ userRoute.route("/users/updateNotificationStatus").post(function (req, res) {
     if (err) {
       res.status(500).json({ status: false, message: "Server Error" });
     } else {
-      const notification = user.notification.find((notif) => notif._id.equals(nid));
+      const notification = user.notification.find((notif) =>
+        notif._id.equals(nid)
+      );
       if (notification) {
         notification.status = true;
         user.save((err) => {
@@ -99,14 +116,13 @@ userRoute.route("/users/updateNotificationStatus").post(function (req, res) {
           }
         });
       } else {
-        res.status(404).json({ status: false, message: "Notification not found" });
+        res
+          .status(404)
+          .json({ status: false, message: "Notification not found" });
       }
     }
   });
 });
-
-
-
 
 // userRoute.route("/users/updateNotificationStatus").post(function (req, res) {
 //   const nid = req.body.nid;
@@ -336,7 +352,6 @@ userRoute.route("/users/getTechLead").get(function (req, res) {
 
 // get members Profile
 userRoute.route("/users/getMembersProfile/:id").get(function (req, res) {
-
   User.find({ _id: req.params.id }, {}, (err, users) => {
     if (err) {
       res.send(err);
