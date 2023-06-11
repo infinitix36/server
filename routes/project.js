@@ -1,6 +1,7 @@
 const express = require("express");
 const projectRoute = express.Router();
 const Project = require("../models/project.model");
+const User = require("../models/user.model");
 
 // Define the route for updating the options for the "description" field
 projectRoute.put("/projects/:projectId/description", async (req, res) => {
@@ -9,7 +10,11 @@ projectRoute.put("/projects/:projectId/description", async (req, res) => {
     const descriptionOptions = req.body;
 
     // Update the options for the "description" field using the findByIdAndUpdate() method
-    const updatedProject = await Project.findByIdAndUpdate(projectId, { description: descriptionOptions }, { new: true });
+    const updatedProject = await Project.findByIdAndUpdate(
+      projectId,
+      { description: descriptionOptions },
+      { new: true }
+    );
 
     if (!updatedProject) {
       return res.status(404).json({ error: "Project not found" });
@@ -21,7 +26,6 @@ projectRoute.put("/projects/:projectId/description", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-
 
 // get feedbacks of which he is the techlead sent user id by params
 projectRoute.route("/projects/getFeedbacks/:userId").get(function (req, res) {
@@ -206,8 +210,6 @@ projectRoute
 //add basic project details by project manager
 projectRoute.route("/projects/addBasicProjDetails").post(function (req, res) {
   try {
-    // variable should be in the name as in the model
-
     const projectName = req.body.projectName;
     const description = req.body.description;
     const technology = req.body.technology;
@@ -216,7 +218,6 @@ projectRoute.route("/projects/addBasicProjDetails").post(function (req, res) {
     const initiatedOn = Date.now();
     const projectManager = req.body.projectManager;
 
-    // we are creating a new object of the model
     const project = new Project({
       projectName,
       description,
@@ -227,33 +228,42 @@ projectRoute.route("/projects/addBasicProjDetails").post(function (req, res) {
       techLead,
     });
 
-    // we are saving the data to the database
     project
       .save()
       .then((item) => {
-        const newNotification = {
-          message: `${projectName} project is Assigned for you`,
-        }
-        User.updateOne({_id:techLead},{$push:{notification:newNotification}},(err, users)=>{
-          console.log("User table Updated successfully")
-        })
         res.json({
           message: "Project added successfully",
           status: true,
         });
+
+        const newNotification = {
+          message: `${projectName} project has been assigned to you`,
+        };
+
+        User.updateOne(
+          { _id: techLead },
+          { $push: { notification: newNotification } }
+        )
+          .then(() => {
+            console.log("User table updated successfully");
+          })
+          .catch((err) => {
+            console.log("Failed to update user table:", err);
+          });
       })
       .catch((err) => {
-        // error code 11000 is for duplicate data in mongo db
         if (err.code === 11000) {
-          return res.json({
+          res.json({
             message: "Project already exists",
             status: false,
           });
+        } else {
+          res.status(500).send({ error: "Error saving data to the database" });
         }
-        res.status(500).send({ error: "Error saving data to the database" });
       });
-  } catch {
-    return res.json([{ message: "Data Not Found", status: "false" }]);
+  } catch (error) {
+    console.log("Error occurred:", error);
+    res.json([{ message: "Data not found", status: false }]);
   }
 });
 
