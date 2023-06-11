@@ -143,9 +143,10 @@ userRoute.route("/users/all").get(function (req, res) {
   const { userRoleName, sortBy, sortOrder } = req.query;
   const query = userRoleName ? { userRoleName } : {};
   let sortCriteria = {};
-  if (sortBy === "fname") {
-    sortCriteria.fname = sortOrder === "asc" ? 1 : -1;
-  } else if (sortBy === "rating") {
+  // if (sortBy === "fname") {
+  //   sortCriteria.fname = sortOrder === "asc" ? 1 : -1;
+  // } else 
+  if (sortBy === "rating") {
     sortCriteria.rating = sortOrder === "asc" ? 1 : -1;
   }
   User.find(query, {

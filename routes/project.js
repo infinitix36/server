@@ -157,7 +157,7 @@ projectRoute
   .route("/projects/getProjectDetailsTL/:id")
   .get(function (req, res) {
     const id = req.params.id;
-    Project.find({ techLead: `${id}` }, { projectName: 1 }, (err, projects) => {
+    Project.find({ techLead: id }, { projectName: 1 }, (err, projects) => {
       if (err) {
         res.send(err);
       } else {
@@ -170,7 +170,7 @@ projectRoute
 
 projectRoute.route("/projects/getProjectDetails/:id").get(function (req, res) {
   const id = req.params.id;
-  Project.find({ "contributors.value": `${id}` }, (err, projects) => {
+  Project.find({ "contributors.value": id }, (err, projects) => {
     if (err) {
       res.send(err);
     } else {
