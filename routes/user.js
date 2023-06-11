@@ -3,6 +3,7 @@ const userRoute = express.Router();
 const User = require("../models/user.model");
 const fetch = require("node-fetch");
 const axios = require("axios");
+
 //git count
 // async function updateUserCommitCount(username) {
 //   try {
@@ -85,15 +86,6 @@ userRoute.route("/users/updateUserProfile").post(function (req, res) {
   })
 });
 
-// userRoute.route("/users/getUserNotificationsAll").get(function (req, res) {
-//   User.find( { notification: 1 }, (err, users) => {
-//     if (err) {
-//       res.send(err);
-//     } else {
-//       res.json(users);
-//     }
-//   });
-// });
 
 userRoute.route("/users/updateNotificationStatus").post(function (req, res) {
   const nid = req.body.nid;
