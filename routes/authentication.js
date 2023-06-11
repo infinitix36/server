@@ -128,59 +128,64 @@ authRoute.route("/authentication/register").post(function (req, res) {
         .send({ error: "Error checking userRoles collection" });
     }
 
-    if (count === 0) {
+    if (count == 0) {
       // If the count is 0, the userRoles collection is empty
       userRoleName = "admin";
       approveStatus = true;
+      console.log("inside loop");
     } else {
       userRoleName = req.body.userRoleName;
     }
+    bcrypt.hash(password, 10, function (err, hashedPassword) {
+      if (err) {
+        return res.status(500).send({ error: "Error hashing password" });
+      }
+      const user = new User({
+        userRoleName: userRoleName,
+        fname: fname,
+        lname: lname,
+        email: email,
+        phone: phone,
+        orangeHrLink: orangeHrLink,
+        GitHubUsername: GitHubUsername,
+        userJiraLink: userJiraLink,
+        password: hashedPassword,
+        commitCount: commitCount,
+        rating: rating,
+        approveStatus: approveStatus,
+        confirmPassword: confirmPassword,
+      });
+
+      // Attempt to save the user's data to the database
+      user
+        .save()
+        .then((item) => {
+          // If the save is successful, send a JSON response with a success message
+          res.json({
+            message: "Account Registered Successfully",
+            status: true,
+          });
+        })
+        .catch((err) => {
+          // If an error occurs during the save process, check if the error code is 11000 (indicating duplicate data)
+          if (err.code === 11000) {
+            // If the error code is 11000, send a JSON response with a message indicating that the user already exists
+            return res.json({ message: "User already exists", status: false });
+          }
+          // If the error is not a duplicate data error, send a 500 status code and a JSON response with an error message
+          res.status(500).send({ error: "Error saving data to the database" });
+        });
+    });
+    const URL = "http://localhost:3000/pending";
+    const mailOptions = {
+      to: "dreamshack1999@gmail.com",
+      subject: "Verify User",
+      html: `New user is there check that IN URL : ${URL}`,
+    };
+    sendMail(mailOptions);
+    console.log(count);
   });
   // Hash the password using bcrypt
-  bcrypt.hash(password, 10, function (err, hashedPassword) {
-    if (err) {
-      return res.status(500).send({ error: "Error hashing password" });
-    }
-    const user = new User({
-      userRoleName: userRoleName,
-      fname: fname,
-      lname: lname,
-      email: email,
-      phone: phone,
-      orangeHrLink: orangeHrLink,
-      GitHubUsername: GitHubUsername,
-      userJiraLink: userJiraLink,
-      password: hashedPassword,
-      commitCount: commitCount,
-      rating: rating,
-      approveStatus: approveStatus,
-      confirmPassword: confirmPassword,
-    });
-
-    // Attempt to save the user's data to the database
-    user
-      .save()
-      .then((item) => {
-        // If the save is successful, send a JSON response with a success message
-        res.json({ message: "Account Registered Successfully", status: true });
-      })
-      .catch((err) => {
-        // If an error occurs during the save process, check if the error code is 11000 (indicating duplicate data)
-        if (err.code === 11000) {
-          // If the error code is 11000, send a JSON response with a message indicating that the user already exists
-          return res.json({ message: "User already exists", status: false });
-        }
-        // If the error is not a duplicate data error, send a 500 status code and a JSON response with an error message
-        res.status(500).send({ error: "Error saving data to the database" });
-      });
-  });
-  const URL = "http://localhost:3000/pending";
-  const mailOptions = {
-    to: "dreamshack1999@gmail.com",
-    subject: "Verify User",
-    html: `New user is there check that IN URL : ${URL}`,
-  };
-  sendMail(mailOptions);
 });
 
 authRoute.route("/authentication/login").post(function (req, res) {
