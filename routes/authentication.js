@@ -107,7 +107,8 @@ authRoute.route("/authentication/verifyToken").post(async (req, res) => {
 });
 
 authRoute.route("/authentication/register").post(function (req, res) {
-  const userRoleName = req.body.userRoleName;
+  let userRoleName;
+  let approveStatus = false;
   const fname = req.body.fname;
   const lname = req.body.lname;
   const email = req.body.email;
@@ -120,6 +121,21 @@ authRoute.route("/authentication/register").post(function (req, res) {
   const commitCount = 0;
   const rating = 0;
 
+  User.countDocuments({}, function (err, count) {
+    if (err) {
+      return res
+        .status(500)
+        .send({ error: "Error checking userRoles collection" });
+    }
+
+    if (count === 0) {
+      // If the count is 0, the userRoles collection is empty
+      userRoleName = "admin";
+      approveStatus = true;
+    } else {
+      userRoleName = req.body.userRoleName;
+    }
+  });
   // Hash the password using bcrypt
   bcrypt.hash(password, 10, function (err, hashedPassword) {
     if (err) {
@@ -138,7 +154,7 @@ authRoute.route("/authentication/register").post(function (req, res) {
       password: hashedPassword,
       commitCount: commitCount,
       rating: rating,
-
+      approveStatus: approveStatus,
       confirmPassword: confirmPassword,
     });
 
