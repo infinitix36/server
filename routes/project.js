@@ -81,6 +81,31 @@ projectRoute
 
 //add feedback comment by QA
 
+projectRoute.route("/project/addStage").post(function (req, res) {
+  const projectId = req.body.projectId;
+  const stage = req.body.stage;
+  Project.updateOne(
+    { _id: projectId },
+    {
+      $set: {
+        stage: stage,
+      },
+    }
+  )
+    .then((result) => {
+      return res.json({
+        message: "Stage Updated",
+        status: true,
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+      return res.json({
+        message: "Error",
+        status: false,
+      });
+    });
+});
 projectRoute.route("/project/addFeedQA").post(function (req, res) {
   const projectId = req.body.projectId;
   const feedBacks = req.body.feedback;

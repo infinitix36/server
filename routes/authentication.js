@@ -194,24 +194,20 @@ authRoute.route("/authentication/login").post(function (req, res) {
 
   User.findOne({ email: email }, function (err, user) {
     if (err) {
-      return res
-        .status(500)
-        .send({ message: "Error while retrieving user from database" });
+      return res.send({ status:false, message: "Error while retrieving user from database" });
     }
 
     if (!user) {
-      return res.status(404).send({ message: "User not found" });
+      return res.send({status:false, message: "User not found" });
     }
 
     if (!user.approveStatus) {
-      return res.status(401).send({ message: "User not approved" });
+      return res.send({status:false, message: "User not approved" });
     }
 
     bcrypt.compare(password, user.password, function (err, result) {
       if (err) {
-        return res
-          .status(500)
-          .send({ error: "Error while comparing passwords" });
+        return res.send({status:false, error: "Error while comparing passwords" });
       }
 
       if (result) {
@@ -225,7 +221,7 @@ authRoute.route("/authentication/login").post(function (req, res) {
           isAuthenticated: true,
         });
       } else {
-        return res.status(401).send({ message: "Incorrect email or password" });
+        return res.send({ message: "Incorrect email or password" });
       }
     });
   });
