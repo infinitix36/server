@@ -4,23 +4,21 @@ const Project = require("../models/project.model");
 const User = require("../models/user.model");
 
 // Define the route for updating the options for the "description" field
-projectRoute.put("/projects/:projectId/description", async (req, res) => {
+projectRoute.post("/projects/changeDescription", async (req, res) => {
   try {
-    const projectId = req.params.projectId;
-    const descriptionOptions = req.body;
-
+    const projectId = req.body.projectId;
+    const newDescription = req.body.description;
     // Update the options for the "description" field using the findByIdAndUpdate() method
     const updatedProject = await Project.findByIdAndUpdate(
       projectId,
-      { description: descriptionOptions },
+      { description: newDescription },
       { new: true }
     );
-
     if (!updatedProject) {
-      return res.status(404).json({ error: "Project not found" });
+      return res.json({ status: false, message: "Update failed" });
+    } else {
+      res.json({ status: true, message: "Project updated" });
     }
-
-    res.json(updatedProject);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Internal server error" });
@@ -186,6 +184,16 @@ projectRoute.route("/projects/getProjectDetails").get(function (req, res) {
       res.send(err);
     } else {
       res.json(projects);
+    }
+  });
+});
+
+projectRoute.route("/projects/getOneProject/:id").get(function (req, res) {
+  Project.find({_id:req.params.id}, (err, projects) => {
+    if (err) {
+      res.send(err);
+    } else {
+      res.json(projects[0]);
     }
   });
 });
